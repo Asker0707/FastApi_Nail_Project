@@ -1,0 +1,485 @@
+{% extends "base.html" %} {% block title %}{{ lesson.title }}{% endblock %} {%
+block content %}
+<style>
+  .lesson-content {
+    font-size: 1.1rem;
+    line-height: 1.7;
+  }
+
+  .lesson-video,
+  .lesson-image {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+    will-change: transform;
+    backface-visibility: hidden;
+    transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .lesson-video:hover,
+  .lesson-image:hover {
+    transform: scale(1.01);
+  }
+
+  .lesson-card {
+    border: none;
+    border-radius: 1rem;
+    background: #fffdf9;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+    transition: box-shadow 0.3s;
+  }
+
+  .lesson-card:hover {
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.1);
+  }
+
+  .breadcrumb {
+    background: #f9f3ea;
+    border: 1px solid #e4d5c3;
+  }
+
+  .lesson-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #7b5a50;
+  }
+
+  .btn-complete {
+    border-radius: 2rem;
+    font-size: 1.1rem;
+    padding: 0.6rem 1.5rem;
+    transition: all 0.3s;
+  }
+
+  .btn-complete:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(163, 107, 94, 0.3);
+  }
+
+  /* Ограничение по высоте и скролл для левой колонки с текстом */
+  .card.lesson-card.h-100 {
+    max-height: 400px;
+    overflow-y: auto;
+  }
+
+  /* Важные стили для заметок */
+  .list-group-item.d-flex {
+    display: flex !important;
+    justify-content: space-between;
+    align-items: stretch;
+    /* Растягиваем по высоте */
+    gap: 1rem;
+  }
+
+  .note-content {
+    display: flex;
+    flex-direction: column;
+    /* Вертикальное расположение: текст сверху, дата снизу */
+    flex: 1 1 auto;
+    min-width: 0;
+    word-break: break-word;
+    max-height: 150px;
+    /* Максимальная высота заметки */
+    overflow-y: auto;
+    /* Скролл если текст большой */
+    padding-right: 0.5rem;
+  }
+
+  .note-text {
+  white-space: nowrap;       /* Запрет переноса строк */
+  overflow: hidden;          /* Скрыть лишний текст */
+  text-overflow: ellipsis;   /* Показать троеточие */
+  max-width: 100%;           /* Чтобы не выходил за родителя */
+  display: block;            /* Чтобы text-overflow работал корректно */
+  flex-grow: 1;
+}
+
+  .note-content small {
+    margin-top: auto;
+    /* Отодвигает дату вниз */
+    color: #999;
+    font-size: 0.85rem;
+  }
+
+  .note-actions {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    flex: 0 0 auto;
+    gap: 0.5rem;
+    min-width: auto;
+  }
+
+  .note-actions button {
+    border-radius: 2rem;
+    padding: 0.15rem 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #7b5a50;
+    background-color: #fffdf9;
+    border: 1.5px solid #7b5a50;
+    box-shadow: 0 2px 6px rgba(123, 90, 80, 0.15);
+    transition: background-color 0.3s ease, color 0.3s ease,
+      box-shadow 0.3s ease, transform 0.2s ease;
+    cursor: pointer;
+    user-select: none;
+    margin-left: 0;
+  }
+
+  .note-actions button:hover {
+    background-color: #7b5a50;
+    color: #fffdf9;
+    box-shadow: 0 4px 12px rgba(123, 90, 80, 0.4);
+    transform: translateY(-2px);
+  }
+
+  .note-actions button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(123, 90, 80, 0.15);
+  }
+
+  .note-actions button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(163, 107, 94, 0.5);
+  }
+</style>
+
+<div class="mt-4 mb-5">
+  <h1 class="lesson-title mb-4">
+    <i class="bi bi-bookmark-check-fill text-primary"></i> {{ lesson.title }}
+  </h1>
+
+  <div class="row g-4">
+    <!-- Левая колонка: Текст -->
+    <div class="col-lg-6">
+      <div class="card lesson-card h-100">
+        <div class="card-body lesson-content">
+          {% if lesson_text_html %} {{ lesson_text_html | safe }} {% else %}
+          <p class="text-muted">Описание к уроку отсутствует.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Правая колонка: Видео или изображение -->
+    <div class="col-lg-6">
+      <div
+        class="card lesson-card d-flex align-items-center justify-content-center p-3"
+      >
+        {% if lesson.video_url %}
+  {% set ext = lesson.video_url.split('.')[-1].lower() %}
+  {% if ext in ['mp4', 'webm', 'ogg', 'mov'] %}
+    <video controls class="lesson-video w-100" style="max-height: 400px">
+      <source src="{{ lesson.video_url }}" type="video/{{ ext }}" />
+      Ваш браузер не поддерживает видео.
+    </video>
+  {% elif ext in ['jpg', 'jpeg', 'png', 'gif'] %}
+    <img src="{{ lesson.video_url }}" class="lesson-image img-fluid" alt="Изображение урока" />
+  {% else %}
+    <p class="text-muted">Неизвестный формат файла: {{ ext }}</p>
+  {% endif %}
+{% else %}
+  <p class="text-muted">Нет видео или изображения для этого урока.</p>
+{% endif %}
+
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="d-flex flex-column flex-md-row justify-content-between align-items-center mt-5 gap-3"
+  >
+    <a href="/courses/{{ course.id }}" class="btn btn-outline-secondary">
+      ← Назад к курсу
+    </a>
+    <button
+      id="completeLessonBtn"
+      class="btn btn-primary btn-complete shadow"
+      aria-live="polite"
+    >
+      ✅ Отметить как завершённый
+    </button>
+  </div>
+
+  <div class="note-block">
+    <h4>📝 Личные заметки</h4>
+
+    <ul
+      id="notesList"
+      class="list-group mb-3"
+      aria-live="polite"
+      aria-relevant="additions removals"
+    >
+      <li class="list-group-item text-muted">Загрузка...</li>
+    </ul>
+
+    <textarea
+      id="noteContent"
+      class="form-control mt-2"
+      rows="5"
+      placeholder="Добавьте новую заметку..."
+      aria-label="Добавить новую заметку"
+    ></textarea>
+    <button class="btn btn-primary btn-complete shadow mt-3" id="saveNoteBtn">
+      💾 Добавить заметку
+    </button>
+
+    <div
+      id="noteStatus"
+      class="text-success mt-2"
+      style="display: none"
+      role="alert"
+    >
+      Заметка успешно добавлена ✅
+    </div>
+  </div>
+</div>
+{% endblock %} {% block extra_js %}
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    loadNotes();
+    checkIfLessonCompleted();
+
+    document
+      .getElementById("completeLessonBtn")
+      .addEventListener("click", markLessonCompleted);
+    document.getElementById("saveNoteBtn").addEventListener("click", saveNote);
+  });
+
+  // Проверка завершения урока
+  async function checkIfLessonCompleted() {
+  const btn = document.getElementById("completeLessonBtn");
+  try {
+    const res = await fetch("/lessons/{{ lesson.id }}/complete", {
+      credentials: "same-origin",
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data.completed) {
+        btn.textContent = "✅ Завершен";
+        btn.disabled = true;
+      } else {
+        btn.textContent = "✅ Отметить как завершённый";
+        btn.disabled = false;
+      }
+    } else {
+      btn.textContent = "✅ Отметить как завершённый";
+      btn.disabled = false;
+    }
+  } catch (err) {
+    btn.textContent = "✅ Отметить как завершённый";
+    btn.disabled = false;
+  }
+}
+
+  // Отметить урок завершённым
+  async function markLessonCompleted() {
+    const btn = document.getElementById("completeLessonBtn");
+    btn.disabled = true;
+    btn.textContent = "⏳ Отмечаем...";
+    try {
+      const res = await fetch("/lessons/{{ lesson.id }}/complete", {
+        method: "PUT",
+        credentials: "same-origin",
+      });
+      if (res.ok) {
+        btn.textContent = "✅ Завершен";
+        btn.disabled = true;
+      } else {
+        const data = await res.json();
+        alert(data.detail || "Ошибка при отметке урока");
+        btn.textContent = "✅ Отметить как завершённый";
+        btn.disabled = false;
+      }
+    } catch (err) {
+      alert("Ошибка сети");
+      btn.textContent = "✅ Отметить как завершённый";
+      btn.disabled = false;
+    }
+  }
+
+  // Загрузка заметок
+  async function loadNotes() {
+    const res = await fetch("/lessons/{{ lesson.id }}/notes", {
+      credentials: "same-origin",
+    });
+    const list = document.getElementById("notesList");
+    list.innerHTML = "";
+    if (res.ok) {
+      const notes = await res.json();
+      if (notes.length === 0) {
+        list.innerHTML =
+          '<li class="list-group-item text-muted">Заметок пока нет.</li>';
+      } else {
+        for (const note of notes) {
+          const li = document.createElement("li");
+          li.className = "list-group-item d-flex";
+          li.dataset.noteId = note.id;
+          li.innerHTML = `
+          <div class="note-content">
+            <div class="note-text">${escapeHtml(note.content)}</div>
+            <small class="text-muted">${new Date(
+              note.created_at
+            ).toLocaleString()}</small>
+          </div>
+          <div class="note-actions">
+            <button class="btn btn-sm btn-outline-primary btn-edit">✏️ Редактировать</button>
+            <button class="btn btn-sm btn-outline-danger btn-delete">🗑️ Удалить</button>
+          </div>`;
+          list.appendChild(li);
+        }
+
+        list.querySelectorAll(".btn-delete").forEach((btn) => {
+          btn.addEventListener("click", onDeleteNote);
+        });
+        list.querySelectorAll(".btn-edit").forEach((btn) => {
+          btn.addEventListener("click", onEditNote);
+        });
+      }
+    } else {
+      list.innerHTML =
+        '<li class="list-group-item text-danger">Ошибка загрузки заметок</li>';
+    }
+  }
+
+  // Добавить новую заметку
+  async function saveNote() {
+    const textarea = document.getElementById("noteContent");
+    const content = textarea.value.trim();
+    if (!content) {
+      alert("Заметка не может быть пустой");
+      return;
+    }
+    const btn = document.getElementById("saveNoteBtn");
+    btn.disabled = true;
+    btn.textContent = "⏳ Сохраняем...";
+    try {
+      const res = await fetch("/lessons/{{ lesson.id }}/note", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "same-origin",
+        body: JSON.stringify({ content }),
+      });
+      if (res.ok) {
+        textarea.value = "";
+        showNoteStatus("Заметка успешно добавлена ✅");
+        loadNotes();
+      } else {
+        alert("Не удалось добавить заметку");
+      }
+    } catch (err) {
+      alert("Ошибка сети при добавлении заметки");
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "💾 Добавить заметку";
+    }
+  }
+
+  function showNoteStatus(msg) {
+    const status = document.getElementById("noteStatus");
+    status.textContent = msg;
+    status.style.display = "block";
+    setTimeout(() => {
+      status.style.display = "none";
+    }, 2000);
+  }
+
+  // Удалить заметку
+  async function onDeleteNote(event) {
+    if (!confirm("Удалить эту заметку?")) return;
+
+    const li = event.target.closest("li");
+    const noteId = li.dataset.noteId;
+
+    try {
+      const res = await fetch(`/lessons/{{ lesson.id }}/note/${noteId}`, {
+        method: "DELETE",
+        credentials: "same-origin",
+      });
+      if (res.ok) {
+        showNoteStatus("Заметка удалена 🗑️");
+        loadNotes();
+      } else {
+        alert("Ошибка при удалении заметки");
+      }
+    } catch (err) {
+      alert("Ошибка сети при удалении заметки");
+    }
+  }
+
+  // Начать редактирование заметки
+  function onEditNote(event) {
+    const li = event.target.closest("li");
+    const noteId = li.dataset.noteId;
+    const contentDiv = li.querySelector(".note-text");
+
+    if (li.querySelector("textarea")) return;
+
+    const originalText = contentDiv.textContent;
+
+    const textarea = document.createElement("textarea");
+    textarea.className = "form-control note-edit-textarea";
+    textarea.value = originalText;
+
+    const saveBtn = document.createElement("button");
+    saveBtn.className = "btn btn-sm btn-success";
+    saveBtn.textContent = "💾 Сохранить";
+
+    const cancelBtn = document.createElement("button");
+    cancelBtn.className = "btn btn-sm btn-secondary";
+    cancelBtn.textContent = "Отмена";
+
+    contentDiv.innerHTML = "";
+    contentDiv.appendChild(textarea);
+    contentDiv.appendChild(saveBtn);
+    contentDiv.appendChild(cancelBtn);
+
+    cancelBtn.onclick = () => {
+      contentDiv.textContent = originalText;
+    };
+
+    saveBtn.onclick = async () => {
+      const newContent = textarea.value.trim();
+      if (!newContent) {
+        alert("Заметка не может быть пустой");
+        return;
+      }
+      saveBtn.disabled = true;
+      cancelBtn.disabled = true;
+      try {
+        const res = await fetch(`/lessons/{{ lesson.id }}/note/${noteId}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "same-origin",
+          body: JSON.stringify({ content: newContent }),
+        });
+        if (res.ok) {
+          showNoteStatus("Заметка обновлена ✅");
+          loadNotes();
+        } else {
+          alert("Ошибка при обновлении заметки");
+        }
+      } catch (err) {
+        alert("Ошибка сети при обновлении заметки");
+      } finally {
+        saveBtn.disabled = false;
+        cancelBtn.disabled = false;
+      }
+    };
+  }
+
+  // Экранирование HTML
+  function escapeHtml(text) {
+    return text
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+</script>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}{{ course and "Редактировать курс" or "Создать курс" }}{% endblock %}
+{% block content %}
+<div class="container mt-4">
+  <h2>{{ course and "Редактировать курс" or "Создать курс" }}</h2>
+  <form method="post"
+        action="{{ course and ('/admin/courses/' ~ course.id ~ '/update') or '/admin/courses/create' }}"
+        enctype="multipart/form-data">
+    <div class="mb-3">
+      <label>Название</label>
+      <input type="text" name="title" class="form-control" value="{{ course and course.title or '' }}" required>
+    </div>
+    <div class="mb-3">
+      <label>Описание</label>
+      <textarea name="description" class="form-control">{{ course and course.description or '' }}</textarea>
+    </div>
+    
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+    <a href="/admin/courses" class="btn btn-secondary">Назад</a>
+  </form>
+</div>
+{% endblock %}

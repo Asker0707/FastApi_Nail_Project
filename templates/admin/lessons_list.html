@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Уроки — {{ course.title }}{% endblock %}
+{% block content %}
+<div class="container mt-4">
+  <h2>Уроки курса «{{ course.title }}»</h2>
+  <a href="/admin/courses/{{ course.id }}/lessons/new" class="btn btn-success mb-3">+ Новый урок</a>
+  <table class="table table-hover">
+    <thead>
+      <tr><th>Название</th><th>Видео</th><th>Действия</th></tr>
+    </thead>
+    <tbody>
+    {% for lesson in lessons %}
+      <tr>
+        <td>{{ lesson.title }}</td>
+        <td>{% if lesson.video_path %}📹{% else %}—{% endif %}</td>
+        <td>
+          <a href="/admin/lessons/{{ lesson.id }}/edit" class="btn btn-sm btn-primary">✎</a>
+          <a href="/admin/lessons/{{ lesson.id }}/delete" class="btn btn-sm btn-danger"
+             onclick="return confirm('Удалить урок?')">🗑</a>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -1,0 +1,224 @@
+{% extends "base.html" %}
+
+{% block title %}{{ course.title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <!-- Заголовок и описание курса -->
+  <div class="mb-4 fade-title">
+    <h1 class="fw-bold">
+      <i class="bi bi-journal-bookmark-fill text-primary"></i>
+      {{ course.title }}
+    </h1>
+    {% if course.description %}
+    <p class="lead text-muted">{{ course.description }}</p>
+    {% endif %}
+  </div>
+
+  <!-- Кнопка добавления урока для админа -->
+  {% if is_admin %}
+  <div class="mb-4">
+    <a href="/admin/courses/{{ course.id }}/lessons/new" class="btn btn-primary btn-lg pulse">
+      <i class="bi bi-plus-lg"></i> Добавить урок
+    </a>
+  </div>
+  {% endif %}
+
+  <!-- Список уроков -->
+  {% if lessons %}
+  <div class="row row-cols-1 row-cols-md-2 g-4">
+    {% for l in lessons %}
+    <div class="col">
+      <div class="card h-100 shadow-sm lesson-card fade-in" style="animation-delay: {{ loop.index0 * 0.1 }}s;">
+        <div class="card-body d-flex flex-column align-items-center text-center">
+          <h5 class="card-title mb-3 w-100">
+  <i class="bi bi-droplet-fill" style="color:#a36b5e;"></i>
+  <a href="/lessons/{{ l.id }}" class="lesson-title-link">{{ l.title }}</a>
+</h5>
+
+          <div class="lesson-icon mb-3">
+  {% if l.video_path %}
+    <video
+      src="/{{ l.video_path }}"
+      width="180"
+      height="180"
+      autoplay
+      loop
+      muted
+      playsinline
+      class="lesson-preview-video"
+      style="border-radius: 8px; object-fit: cover;"
+    ></video>
+  {% else %}
+    <div class="text-muted">Видео отсутствует</div>
+  {% endif %}
+</div>
+
+
+          <div class="mt-auto d-flex flex-wrap gap-2 justify-content-start">
+
+            {% if l.video_path %}
+            <a href="/{{ l.video_path }}" target="_blank" class="btn btn-outline-primary btn-sm btn-animated">
+              <i class="bi bi-camera-video"></i> Смотреть видео
+            </a>
+            {% endif %}
+            <a href="/lessons/{{ l.id }}" class="btn btn-outline-primary btn-sm btn-animated">
+              <i class="bi bi-book"></i> Перейти к уроку
+            </a>
+            {% if is_admin %}
+            <a href="/admin/lessons/{{ l.id }}/edit" class="btn btn-outline-warning btn-sm btn-animated">
+              <i class="bi bi-pencil"></i> Редактировать
+            </a>
+            <a href="/admin/lessons/{{ l.id }}/delete" onclick="return confirm('Удалить урок?')"
+              class="btn btn-outline-danger btn-sm btn-animated">
+              <i class="bi bi-trash"></i> Удалить
+            </a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="mt-4 text-muted">Уроки ещё не добавлены.</p>
+  {% if is_admin %}
+  <a href="/admin/courses/{{ course.id }}/lessons/new" class="btn btn-primary btn-lg pulse">
+    <i class="bi bi-plus-lg"></i> Добавить первый урок
+  </a>
+  {% endif %}
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Плавное появление заголовка */
+.fade-title {
+  opacity: 0;
+  transform: translateY(-10px);
+  animation: fadeSlideDown 0.7s forwards;
+}
+@keyframes fadeSlideDown {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Карточки */
+.lesson-card {
+  position: relative;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.7s forwards;
+  padding: 1.2rem;
+  min-height: 260px;
+  border-radius: 1rem;
+  background: #f1e7d3 url("/static/images/2151345087-Photoroom.png") center/cover no-repeat;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+  border: 1px solid #e4d5c3;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.lesson-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+}
+
+/* Анимация появления */
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+
+/* Блёстки */
+.lesson-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(255,255,255,0.2) 1px, transparent 1px);
+  background-size: 20px 20px;
+  opacity: 0.15;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Контент сверху */
+.lesson-card .card-body {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  text-align: left;
+}
+
+
+/* Заголовок */
+.lesson-card .card-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.7rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.lesson-title-link {
+  color: #a36b5e;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+.lesson-title-link:hover {
+  color: #7b5a50;
+  text-decoration: underline;
+}
+
+/* Видео */
+.lesson-preview-video {
+  border-radius: 0.8rem;
+  box-shadow: 0 0.4rem 1rem rgba(0,0,0,0.2);
+  transition: transform 0.3s;
+}
+.lesson-preview-video:hover {
+  transform: scale(1.05);
+}
+
+/* Кнопки */
+.lesson-card .btn {
+  font-size: 1.2rem;
+  padding: 0.5rem 1.1rem;
+  border-radius: 2rem;
+  border: 1px solid #a36b5e;
+  color: #a36b5e;
+  background: rgba(255,255,255,0.25);
+  backdrop-filter: blur(4px);
+  transition: all 0.3s, box-shadow 0.3s;
+}
+.lesson-card .btn:hover {
+  background: #a36b5e;
+  color: #fff;
+  box-shadow: 0 0 0 3px rgba(163,107,94,0.2);
+}
+.lesson-card .btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(163,107,94,0.4);
+}
+
+/* Пульсация кнопки Добавить */
+.pulse {
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(163,107,94,0.5); }
+  70% { box-shadow: 0 0 0 10px rgba(163,107,94,0); }
+  100% { box-shadow: 0 0 0 0 rgba(163,107,94,0); }
+}
+</style>
+{% endblock %}

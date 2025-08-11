@@ -1,0 +1,15 @@
+.env
+*.venv/
+*.__pycache__/
+**/__pycache__/
+.pytest_cache/
+alembic.ini
+create_admin.py
+*.pyc
+docker/
+scripts/
+test.db
+app.log
+.ruff_cache/
+.mypy_cache/
+venv/

@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Nailis Hub - Обучение ногтевому сервису</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* Reset */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: "Poppins", sans-serif;
+        color: #333;
+        background: #fff;
+        line-height: 1.6;
+      }
+
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+
+      /* Header */
+      header {
+        padding: 24px 40px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #eee;
+        background-color: #fff;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .logo {
+        font-family: "Playfair Display", serif;
+        font-size: 30px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        color: #1a120b;
+      }
+
+      .logo span {
+        color: #c99a6b;
+      }
+
+      nav a {
+        font-weight: 500;
+        margin-left: 32px;
+        color: #333;
+        transition: color 0.3s ease;
+        letter-spacing: 0.5px;
+        font-size: 16px;
+      }
+
+      nav a:hover,
+      nav a:focus {
+        color: #c99a6b;
+        outline: none;
+      }
+
+      /* Hero */
+      .hero {
+        position: relative;
+        min-height: 100vh;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        align-items: center;
+        padding: 0 17%;
+        gap: 40px;
+        overflow: visible;
+        background-color: #ccc;
+      }
+
+      .hero-content {
+        max-width: 600px;
+        order: 1;
+        margin-bottom: 10.5rem;
+      }
+
+      .hero-content h1 {
+        font-size: 3.2rem;
+        margin-bottom: 1rem;
+        font-family: "Playfair Display", serif;
+        color: #1a120b;
+      }
+
+      .hero-content p {
+        font-size: 1.18rem;
+        color: #555;
+        margin-bottom: 2.5rem;
+      }
+
+      .btn {
+        display: inline-block;
+        background-color: #1a120b;
+        color: #fff;
+        padding: 0.95rem 2.5rem;
+        font-weight: 600;
+        letter-spacing: 0.6px;
+        border-radius: 6px;
+        box-shadow: 0 6px 12px rgba(25, 18, 11, 0.25);
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        cursor: pointer;
+      }
+
+      .btn:hover,
+      .btn:focus {
+        background-color: #c99a6b;
+        box-shadow: 0 8px 20px rgba(201, 154, 107, 0.6);
+        outline: none;
+      }
+
+      .hero-image {
+        position: absolute;
+        top: 0;
+        right: 0;
+        height: 100%;
+        max-width: 55%;
+        width: auto;
+        z-index: 2;
+      }
+
+      .hero-image img {
+        height: 100%;
+        width: auto;
+        border-radius: 12px 0 0 12px;
+        object-fit: contain;
+        filter: brightness(0.75);
+        display: block;
+        position: static;
+      }
+
+      /* About Section */
+      .about {
+        display: flex;
+        align-items: center;
+        gap: 60px;
+        padding: 80px 8% 80px 8%;
+        max-width: 1200px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 1;
+      }
+
+      .about-img {
+        position: absolute;
+        left: -9%;
+        width: 600px;
+        top: 40%;
+        transform: translateY(-50%);
+        z-index: 3;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        border-radius: 12px;
+      }
+
+      .about-img img {
+        width: 100%;
+        border-radius: 12px;
+        object-fit: cover;
+        display: block;
+      }
+
+      .about-text {
+        margin-left: 520px;
+        max-width: 600px;
+      }
+
+      .about-text h2 {
+        font-family: "Playfair Display", serif;
+        font-size: 44px;
+        margin-bottom: 20px;
+        position: relative;
+        padding-bottom: 14px;
+        letter-spacing: 0.5px;
+        color: #1a120b;
+      }
+
+      .about-text h2::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 70px;
+        height: 4px;
+        background-color: #c99a6b;
+        border-radius: 3px;
+      }
+
+      .about-text p {
+        font-size: 17px;
+        color: #555;
+        margin-bottom: 1.6rem;
+      }
+
+      /* Info Section */
+      .info {
+        display: flex;
+        gap: 60px;
+        padding: 80px 8%;
+        max-width: 1200px;
+        margin: 0 auto 80px;
+      }
+
+      .hours,
+      .video {
+        flex: 1;
+      }
+
+      .hours h3,
+      .video h3 {
+        font-family: "Playfair Display", serif;
+        font-size: 30px;
+        margin-bottom: 28px;
+        position: relative;
+        padding-bottom: 8px;
+        color: #1a120b;
+      }
+
+      .hours h3::after,
+      .video h3::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 50px;
+        height: 3px;
+        background-color: #c99a6b;
+        border-radius: 2px;
+      }
+
+      .hours p {
+        font-size: 16px;
+        color: #555;
+        margin: 10px 0;
+        letter-spacing: 0.3px;
+      }
+
+      .video img {
+        width: 100%;
+        border-radius: 12px;
+        object-fit: cover;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+        display: block;
+      }
+
+      /* Footer */
+      footer {
+        text-align: center;
+        padding: 25px 15px;
+        font-size: 14px;
+        color: #777;
+        border-top: 1px solid #eee;
+        background-color: #fff;
+      }
+
+      /* Responsive */
+
+      @media (max-width: 992px) {
+        .about {
+          position: static;
+          flex-direction: column;
+          text-align: center;
+          padding: 60px 5%;
+          gap: 40px;
+        }
+        .about-img {
+          position: static;
+          width: 100%;
+          max-width: 400px;
+          margin: 0 auto;
+          box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+          border-radius: 12px;
+        }
+        .about-text {
+          margin-left: 0;
+          max-width: 100%;
+          padding: 0 1rem;
+        }
+      }
+
+      @media (max-width: 768px) {
+        header {
+          padding: 15px 25px;
+        }
+
+        nav a {
+          margin-left: 18px;
+          font-size: 15px;
+        }
+
+        .hero {
+          grid-template-columns: 1fr;
+          min-height: auto;
+          padding-top: 40px;
+          padding-bottom: 40px;
+        }
+
+        .hero-content {
+          max-width: 100%;
+          padding: 0 2rem 2rem;
+          text-align: center;
+          order: 1;
+          margin-bottom: 3rem;
+        }
+
+        .hero-content h1 {
+          font-size: 2.4rem;
+        }
+
+        .hero-content p {
+          max-width: 100%;
+          margin-left: auto;
+          margin-right: auto;
+        }
+
+        .hero-image {
+          position: static;
+          order: 2;
+          width: 100%;
+          max-width: none;
+          height: auto;
+          margin-top: 1rem;
+        }
+
+        .hero-image img {
+          width: 100%;
+          height: auto;
+          border-radius: 12px 12px 0 0;
+          filter: brightness(0.75);
+        }
+      }
+
+      @media (max-width: 480px) {
+        nav a {
+          margin-left: 12px;
+          font-size: 14px;
+        }
+
+        .about-text h2 {
+          font-size: 32px;
+        }
+
+        .hours h3,
+        .video h3 {
+          font-size: 24px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <div class="logo">Nailis<span>Hub</span></div>
+      <nav>
+        <a href="#">Главная</a>
+        <a href="#about">Обо мне</a>
+        <a href="/courses">Курсы</a>
+        <a href="/auth/login">Войти</a>
+        <a href="/auth/register">Регистрация</a>
+      </nav>
+    </header>
+
+    <section class="hero" role="banner" aria-label="Главный баннер">
+      <div class="hero-content">
+        <h1>"Чувствую себя как жена олигарха"</h1>
+        <p>
+          Так говорят мои клиенты после френча
+        </p>
+        <a href="#" class="btn" role="button" tabindex="0">ОНЛАЙН ОБУЧЕНИЕ</a>
+      </div>
+      <div class="hero-image" aria-label="Изображение с маникюром">
+        <img src="static/images/hero.png" alt="Nail art" loading="lazy" />
+      </div>
+    </section>
+
+    <section class="about" id="about" aria-labelledby="about-title">
+      <div class="about-img">
+        <img
+          src="static/images/hero11.jpg"
+          alt="Олеся - мастер ногтевого сервиса"
+          loading="lazy"
+        />
+      </div>
+      <div class="about-text">
+        <h2 id="about-title">О нас</h2>
+        <p>
+          Привет! Меня зовут Олеся, я мастер ногтевого сервиса с 5-летним опытом
+          работы. За годы практики я обучила более 10 учеников, многие из
+          которых стали успешными мастерами и открыли свои студии.
+        </p>
+        <p>
+          Моя миссия — делиться знаниями и помогать людям освоить востребованную
+          профессию. На платформе Nailis Hub я собрала все свои лучшие методики
+          и практики, чтобы вы могли учиться в удобном формате.
+        </p>
+      </div>
+    </section>
+
+    <section class="info" aria-label="Информация о часах работы и студии">
+      <div class="hours">
+        <h3>Часы работы</h3>
+        <p>Понедельник — Пятница: 9:00 — 22:00</p>
+        <p>Суббота: 10:00 — 19:00</p>
+        <p>Воскресенье: 10:00 — 19:00</p>
+      </div>
+      <div class="video">
+        <h3>Наша студия</h3>
+        <img
+          src="static/images/2147878838.jpg"
+          alt="Фото студии Nailis Hub"
+          loading="lazy"
+        />
+      </div>
+    </section>
+
+    <footer>&copy; 2025 Nailis Hub. Все права защищены.</footer>
+  </body>
+</html>

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Редактировать курс{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2>Редактировать курс</h2>
+  <form action="/admin/courses/{{ course.id }}/edit" method="post">
+    <div class="mb-3">
+      <label>Название курса</label>
+      <input type="text" name="title" class="form-control" value="{{ course.title }}" required>
+    </div>
+    <div class="mb-3">
+      <label>Описание</label>
+      <textarea name="description" class="form-control" rows="4">{{ course.description }}</textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+  </form>
+</div>
+{% endblock %}

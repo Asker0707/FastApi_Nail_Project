@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Домашние задания{% endblock %}
+
+{% block content %}
+<h2>Мои домашние задания</h2>
+
+<div class="list-group mt-3">
+  {% for assignment in assignments %}
+  <div class="list-group-item">
+    <h5>{{ assignment.title }}</h5>
+    <p>{{ assignment.description }}</p>
+    {% if assignment.submission_path %}
+      <p><strong>Ваш файл:</strong> <a href="/{{ assignment.submission_path }}" target="_blank">Смотреть</a></p>
+      <p><strong>Статус проверки:</strong> {{ assignment.status }}</p>
+      {% if assignment.feedback %}
+        <p><strong>Комментарий:</strong> {{ assignment.feedback }}</p>
+      {% endif %}
+    {% else %}
+      <form action="/assignments/{{ assignment.id }}/submit" method="post" enctype="multipart/form-data">
+        <div class="mb-3">
+          <input type="file" name="file" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Отправить</button>
+      </form>
+    {% endif %}
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Личный кабинет{% endblock %}
+
+{% block extra_css %}
+<style>
+  .note-card {
+    border-radius: 1rem;
+    background: #fffdf9;
+    box-shadow: 0 6px 18px rgba(163, 107, 94, 0.12);
+    transition: box-shadow 0.3s ease;
+    cursor: pointer;
+  }
+  .note-card:hover {
+    box-shadow: 0 12px 36px rgba(163, 107, 94, 0.24);
+  }
+  .note-header {
+    font-weight: 600;
+    color: #7b5a50;
+  }
+  .note-content-preview {
+    color: #5a4d47;
+  }
+  .note-link {
+    text-decoration: none;
+    color: #a36b5e;
+    font-weight: 600;
+  }
+  .note-link:hover {
+    text-decoration: underline;
+    color: #7b5a50;
+  }
+  .no-notes {
+    font-style: italic;
+    color: #a08b7a;
+    text-align: center;
+    padding: 2rem 0;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2 class="mb-4">Добро пожаловать, <span style="color: #7b5a50;">{{ user.full_name }}</span>! <i class="bi bi-person-circle"></i></h2>
+
+  <h4 class="mb-3">🗒️ Ваши заметки</h4>
+
+  {% if notes %}
+    <div class="row g-3">
+      {% for note in notes %}
+      <div class="col-md-6 col-lg-4">
+        <a href="/lessons/{{ note.lesson_id }}" class="note-link">
+          <div class="card note-card p-3 h-100 d-flex flex-column justify-content-between">
+            <div>
+              <h5 class="note-header mb-2">
+                <i class="bi bi-journal-text me-2"></i>{{ note.lesson_title }}
+              </h5>
+              <p class="note-content-preview mb-0">
+                {{ note.content[:120] }}{% if note.content|length > 120 %}...{% endif %}
+              </p>
+            </div>
+            <small class="text-muted mt-3 d-block text-end">
+              <i class="bi bi-clock-history"></i>
+              {{ note.created_at.strftime('%d.%m.%Y, %H:%M') if note.created_at else '' }}
+            </small>
+          </div>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="no-notes">
+      <i class="bi bi-clipboard-x" style="font-size: 2rem;"></i>
+      <p>Заметок пока нет. Начните учиться и добавлять заметки к урокам!</p>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

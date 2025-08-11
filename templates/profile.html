@@ -1,0 +1,621 @@
+{% extends "base.html" %}
+
+{% block title %}Профиль | Nailis.hub{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<style>
+  :root {
+    --primary: #6a11cb;
+    --secondary: #b84b71;
+    --accent: #ff6b6b;
+    --light: #f9f7ff;
+    --dark: #2d2b55;
+    --glass: rgba(255, 255, 255, 0.25);
+    --glass-border: rgba(255, 255, 255, 0.4);
+    --shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Body styles for profile page only */
+  body.profile-page {
+    background: linear-gradient(135deg, #1a0933, #2d0b5a);
+    color: #fff;
+    min-height: 100vh;
+    padding: 20px;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  body.profile-page::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('https://images.unsplash.com/photo-1519681393784-d120267933ba?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80') no-repeat center center;
+    background-size: cover;
+    opacity: 0.15;
+    z-index: -1;
+  }
+
+  .profile-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    perspective: 1000px;
+  }
+
+  /* 3D Header Section */
+  .profile-header {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    height: 300px;
+    margin-bottom: -100px;
+    transform-style: preserve-3d;
+    transition: transform 0.5s ease;
+    box-shadow: var(--shadow);
+  }
+
+  .profile-header:hover {
+    transform: rotateY(5deg) rotateX(2deg);
+  }
+
+  .profile-banner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    z-index: 1;
+    animation: gradientShift 15s ease infinite;
+    background-size: 200% 200%;
+  }
+
+  .profile-banner-pattern {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+    opacity: 0.3;
+    z-index: 2;
+  }
+
+  /* 3D Avatar */
+  .profile-avatar {
+    position: relative;
+    z-index: 3;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 5px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    transform: translateY(50%) rotateY(0deg);
+    transform-style: preserve-3d;
+    transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    animation: floatAvatar 8s ease-in-out infinite;
+    cursor: pointer;
+  }
+
+  .profile-avatar:hover {
+    transform: translateY(50%) rotateY(180deg);
+  }
+
+  .profile-avatar-front, .profile-avatar-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+  }
+
+  .profile-avatar-front {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+  }
+
+  .profile-avatar-back {
+    background: linear-gradient(135deg, var(--secondary), var(--accent));
+    transform: rotateY(180deg);
+    flex-direction: column;
+    padding: 20px;
+    text-align: center;
+    font-size: 0.9rem;
+  }
+
+  .profile-avatar-content {
+    font-size: 4.5rem;
+    font-weight: 700;
+    color: white;
+    text-transform: uppercase;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  }
+
+  .profile-avatar-back i {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+  }
+
+  /* Glassmorphism Content */
+  .profile-content {
+    position: relative;
+    z-index: 4;
+    background: var(--glass);
+    backdrop-filter: blur(12px);
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    padding: 120px 30px 30px;
+    margin-top: -20px;
+    border: 1px solid var(--glass-border);
+    transform-style: preserve-3d;
+    transform: translateZ(20px);
+  }
+
+  .profile-info {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+
+  .profile-name {
+    font-weight: 700;
+    font-size: 2.5rem;
+    color: white;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  .profile-email {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+  }
+
+  /* Stats Cards with 3D Effect */
+  .stats-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .stat-card {
+    background: var(--glass);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    padding: 1.5rem;
+    text-align: center;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 1px solid var(--glass-border);
+    transform-style: preserve-3d;
+    transform: translateZ(0);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s ease;
+  }
+
+  .stat-card:hover {
+    transform: translateY(-10px) translateZ(20px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  }
+
+  .stat-card:hover::before {
+    transform: scaleX(1);
+  }
+
+  .stat-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .stat-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 0.25rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .stat-label {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  /* Progress Section */
+  .progress-container {
+    margin-bottom: 2.5rem;
+  }
+
+  .section-title {
+    font-weight: 600;
+    font-size: 1.8rem;
+    color: white;
+    margin-bottom: 1.5rem;
+    position: relative;
+    padding-left: 1.5rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .section-title:before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 10px var(--accent);
+  }
+
+  .progress-card {
+    background: var(--glass);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--glass-border);
+    transform-style: preserve-3d;
+    transition: transform 0.4s ease;
+  }
+
+  .progress-card:hover {
+    transform: translateY(-5px) translateZ(10px);
+  }
+
+  .progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+  }
+
+  .progress-title {
+    font-weight: 600;
+    font-size: 1.2rem;
+    color: white;
+  }
+
+  .progress-date {
+    font-weight: 500;
+    color: var(--accent);
+    font-size: 1rem;
+  }
+
+  /* Badges Section */
+  .badges-container {
+    margin-bottom: 2.5rem;
+  }
+
+  .badges-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .badge-item {
+    background: var(--glass);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    padding: 1.5rem 0.75rem;
+    text-align: center;
+    border: 1px solid var(--glass-border);
+    transform-style: preserve-3d;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .badge-item:hover {
+    transform: translateY(-10px) rotateY(10deg) scale(1.05);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+  }
+
+  .badge-icon {
+    font-size: 3rem;
+    margin-bottom: 0.75rem;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+  }
+
+  .badge-item:hover .badge-icon {
+    transform: scale(1.2) rotateY(15deg);
+  }
+
+  .badge-name {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: white;
+  }
+
+  /* Logout Button */
+  .logout-btn {
+    display: block;
+    margin: 0 auto;
+    padding: 1rem 3rem;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    border: none;
+    border-radius: 15px;
+    color: white;
+    font-weight: 600;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 10px 20px rgba(106, 17, 203, 0.3);
+    position: relative;
+    overflow: hidden;
+    transform-style: preserve-3d;
+    transform: translateZ(0);
+  }
+
+  .logout-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: 0.5s;
+  }
+
+  .logout-btn:hover {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 15px 30px rgba(106, 17, 203, 0.5);
+  }
+
+  .logout-btn:hover::before {
+    left: 100%;
+  }
+
+  /* Animations */
+  @keyframes floatAvatar {
+    0%, 100% { transform: translateY(50%) rotateY(0deg) rotate(0deg); }
+    25% { transform: translateY(50%) rotateY(5deg) rotate(2deg); }
+    50% { transform: translateY(50%) rotateY(0deg) rotate(0deg); }
+    75% { transform: translateY(50%) rotateY(-5deg) rotate(-2deg); }
+  }
+
+  @keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeIn 0.6s ease-out forwards;
+  }
+
+  @keyframes fadeIn {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .delay-1 { animation-delay: 0.1s; }
+  .delay-2 { animation-delay: 0.2s; }
+  .delay-3 { animation-delay: 0.3s; }
+  .delay-4 { animation-delay: 0.4s; }
+  .delay-5 { animation-delay: 0.5s; }
+
+  /* Responsive Design */
+  @media (max-width: 992px) {
+    .profile-header {
+      height: 250px;
+      margin-bottom: -80px;
+    }
+    
+    .profile-avatar {
+      width: 160px;
+      height: 160px;
+    }
+    
+    .profile-avatar-content {
+      font-size: 3.5rem;
+    }
+    
+    .profile-content {
+      padding-top: 100px;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .profile-header {
+      height: 220px;
+      margin-bottom: -70px;
+    }
+    
+    .profile-avatar {
+      width: 140px;
+      height: 140px;
+    }
+    
+    .profile-avatar-content {
+      font-size: 3rem;
+    }
+    
+    .profile-name {
+      font-size: 2rem;
+    }
+    
+    .stats-container {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .profile-header {
+      height: 200px;
+      margin-bottom: -60px;
+    }
+    
+    .profile-avatar {
+      width: 120px;
+      height: 120px;
+    }
+    
+    .profile-avatar-content {
+      font-size: 2.5rem;
+    }
+    
+    .profile-name {
+      font-size: 1.8rem;
+    }
+    
+    .badges-grid {
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-page">
+  <div class="profile-container">
+    <div id="profile-content">
+      <div class="d-flex justify-content-center align-items-center" style="min-height: 60vh;">
+        <div class="spinner-border" style="width: 3rem; height: 3rem; color: #b84b71;" role="status">
+          <span class="visually-hidden">Загрузка...</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  async function loadProfile() {
+    const res = await fetch("/api/profile_data", { credentials: "same-origin" });
+    if (!res.ok) return window.location.href = "/login";
+    const data = await res.json();
+
+    // Создаем аватар из инициалов
+    const initials = data.full_name.split(' ').map(n => n[0]).join('').toUpperCase();
+
+    // Формируем HTML для последних уроков
+    let lastLessonsHTML = '';
+    if (data.last_courses && data.last_courses.length) {
+      lastLessonsHTML = `
+        <div class="progress-container">
+          <h2 class="section-title">Последние завершенные уроки</h2>
+          ${data.last_courses.map(lesson => `
+            <div class="progress-card fade-in">
+              <div class="progress-header">
+                <div class="progress-title">${lesson.title}</div>
+                <div class="progress-date">${lesson.date}</div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    // Формируем HTML для бейджей
+    let badgesHTML = '';
+    if (data.badges && data.badges.length) {
+      badgesHTML = `
+        <div class="badges-container">
+          <h2 class="section-title">Достижения</h2>
+          <div class="badges-grid">
+            ${data.badges.map((badge, index) => `
+              <div class="badge-item fade-in delay-${index+1}">
+                <div class="badge-icon"><i class="${badge.icon}"></i></div>
+                <div class="badge-name">${badge.name}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    // Весь HTML профиля
+    const profileHTML = `
+      <div class="w-100">
+        <div class="profile-header">
+          <div class="profile-banner"></div>
+          <div class="profile-banner-pattern"></div>
+          <div class="profile-avatar">
+            <div class="profile-avatar-front">
+              <div class="profile-avatar-content">${initials}</div>
+            </div>
+            <div class="profile-avatar-back">
+              <i class="fas fa-award"></i>
+              <div>Профессионал</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="profile-content">
+          <div class="profile-info fade-in">
+            <h1 class="profile-name">${data.full_name}</h1>
+            <div class="profile-email">${data.email}</div>
+          </div>
+          
+          <div class="stats-container">
+            <div class="stat-card fade-in delay-1">
+              <div class="stat-icon">📊</div>
+              <div class="stat-value">${data.progress_percent}%</div>
+              <div class="stat-label">Общий прогресс</div>
+            </div>
+            
+            <div class="stat-card fade-in delay-2">
+              <div class="stat-icon">✅</div>
+              <div class="stat-value">${data.completed_lessons}</div>
+              <div class="stat-label">Завершенные уроки</div>
+            </div>
+            
+            <div class="stat-card fade-in delay-3">
+              <div class="stat-icon">📚</div>
+              <div class="stat-value">${data.total_lessons}</div>
+              <div class="stat-label">Всего уроков</div>
+            </div>
+          </div>
+          
+          ${lastLessonsHTML}
+          ${badgesHTML}
+          
+          <button class="logout-btn fade-in delay-5" onclick="window.location.href='/auth/logout'">
+            <i class="fas fa-sign-out-alt"></i> Выйти
+          </button>
+        </div>
+      </div>
+    `;
+
+    document.getElementById("profile-content").innerHTML = profileHTML;
+  }
+
+  // Добавляем класс к body только для этой страницы
+  document.addEventListener('DOMContentLoaded', () => {
+    document.body.classList.add('profile-page');
+    loadProfile();
+  });
+</script>
+{% endblock %}
