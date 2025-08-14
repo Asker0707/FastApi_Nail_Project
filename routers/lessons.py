@@ -20,17 +20,15 @@
 import logging
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Path, Request, status
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi import APIRouter, Depends, HTTPException, Path, status
+from fastapi.responses import JSONResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.future import select
 
 from auth.dependencies import get_current_user
 from db import models
 from db.database import get_db
 from services.lesson_service import (
-    get_lesson_data,
     is_lesson_completed,
     mark_lesson_completed,
 )
@@ -39,52 +37,6 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/lessons", tags=["lessons"])
 templates = Jinja2Templates(directory="templates")
-
-
-@router.get("/{lesson_id}", response_class=HTMLResponse)
-async def lesson_page(
-    request: Request,
-    lesson_id: UUID = Path(...),
-    db: AsyncSession = Depends(get_db),
-    current_user: models.User = Depends(get_current_user),
-):
-    """
-    Отображает страницу урока с детальной информацией.
-
-    Args:
-        request (Request): Объект HTTP запроса
-        lesson_id (UUID): Идентификатор урока
-        db (AsyncSession): Асинхронная сессия базы данных
-        current_user (models.User): Текущий аутентифицированный пользователь
-
-    Returns:
-        HTMLResponse: HTML страница с деталями урока
-
-    Raises:
-        HTTPException: 404 если урок не найден
-    """
-    lesson, course, text_html = await get_lesson_data(lesson_id, db)
-
-    if not lesson:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Урок не найден")
-
-    stmt = select(models.Note).filter_by(user_id=current_user.id,
-                                         lesson_id=lesson_id)
-    result = await db.execute(stmt)
-    note = result.scalars().first()
-    note_content = note.content if note else ""
-
-    return templates.TemplateResponse(
-        "lesson_detail.html",
-        {
-            "request": request,
-            "user": current_user,
-            "lesson": lesson,
-            "lesson_text_html": text_html,
-            "course": course,
-            "note_content": note_content,
-        },
-    )
 
 
 @router.put("/{lesson_id}/complete")

@@ -1,3 +1,22 @@
+"""
+Основной модуль FastAPI приложения для онлайн-платформы по маникюру.
+
+Содержит конфигурацию приложения, обработчики маршрутов
+и подключение всех компонентов:
+- Настройка FastAPI приложения с шаблонами Jinja2
+- Подключение статических файлов
+- Обработчики исключений
+- Главная страница
+- Подключенные роутеры:
+  * frontend - фронтенд маршруты
+  * notes - работа с заметками
+  * user_profile - профили пользователей
+  * lessons - управление уроками
+  * course_admin - админка курсов
+  * lesson_admin - админка уроков
+  * auth.routes - маршруты аутентификации
+"""
+
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles

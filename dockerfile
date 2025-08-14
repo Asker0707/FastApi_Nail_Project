@@ -32,7 +32,8 @@ RUN pip install --no-cache-dir --upgrade pip && \
 COPY --chown=appuser:appuser . .
 
 # Меняем пользователя
-# USER appuser
+RUN touch /app.log && chown appuser:appuser /app.log && chmod 664 /app.log
+USER appuser
 
 # Для production
 CMD ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8000", "main:app"]

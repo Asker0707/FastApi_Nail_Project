@@ -1,432 +1,255 @@
 <!DOCTYPE html>
 <html lang="ru">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Nailis Hub - Обучение ногтевому сервису</title>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nailis Hub — исправленная верстка</title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;500;600&display=swap"
-      rel="stylesheet"
-    />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
 
-    <style>
-      /* Reset */
-      *,
-      *::before,
-      *::after {
-        box-sizing: border-box;
+  <style>
+    :root{
+      --accent: #c99a6b;
+      --dark: #1a120b;
+      --muted: #7f776f;
+      --max-width: 1200px;
+
+      /* Подгоняй эти значения для точного кадрирования */
+      --hero-height: 590px;        /* высота hero секции */
+      --hero-overlay: 0.18;        /* затемнение поверх фонового изображения */
+      --hero-offset: 140px;        /* смещение фонового изображения влево (увеличь — кадр сместится влево) */
+
+      --about-overlap: 160px;      /* насколько about-картинка поднята вверх (px) */
+      --about-into-text: 100px;    /* насколько она заходит в текстовую колонку (px) */
+      --about-card-width: 420px;   /* ширина вертикальной карточки */
+      --about-card-height: 540px;  /* высота карточки */
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:"Poppins",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+      color:var(--dark);
+      background:#fff;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      line-height:1.6;
+    }
+    img{display:block;max-width:100%;height:auto}
+
+    .container{max-width:var(--max-width);margin:0 auto;padding:0 24px}
+
+    /* header */
+    header{
+      position:sticky; top:0; z-index:120;
+      background:#fff; border-bottom:1px solid #eee;
+      box-shadow:0 2px 6px rgba(0,0,0,0.03);
+    }
+    .topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 0}
+    .logo{font-family:"Playfair Display",serif;font-weight:700;font-size:26px;color:var(--dark)}
+    .logo span{color:var(--accent)}
+    nav{display:flex;gap:18px;align-items:center}
+    nav a{color:var(--muted);font-weight:600;font-size:14px;text-decoration:none}
+    nav a:hover{color:var(--accent)}
+
+    /* HERO — фон картинкой, не выходит за фон */
+    .hero{
+      position:relative;
+      background-color:#85817e;
+      /* путь к твоей hero картинке */
+      background-image: url("static/images/hero.png");
+      /* смещаем фон немного влево для нужного кадра (подправь --hero-offset) */
+      background-position: calc(100% - var(--hero-offset)) center;
+      background-repeat: no-repeat;
+      overflow:hidden; /* картинка не вылазит за фон */
+      min-height: var(--hero-height);
+      display:flex;
+      align-items:center;
+    }
+
+    /* затемнение для читаемости текста */
+    .hero::after{
+      content:""; position:absolute; inset:0;
+      background: linear-gradient(180deg, rgba(0,0,0,var(--hero-overlay)) 0%, rgba(0,0,0,0.07) 60%);
+      pointer-events:none;
+    }
+
+    .hero-inner{
+      position:relative; z-index:2;
+      max-width:var(--max-width); margin:0 auto; width:100%;
+      padding: 18px 24px; /* небольшой верхний padding чтобы текст не прилипал */
+      display:grid;
+      grid-template-columns: 46% 54%; /* текст в левой колонке */
+      gap:20px;
+      align-items:center;
+    }
+
+    .hero-left{ color:#fff; max-width: 640px; }
+    .eyebrow{font-size:12px;color:rgba(255,255,255,0.9);letter-spacing:2px;margin-bottom:12px}
+    .hero-left h1{
+      margin:0 0 16px 0;
+      font-family:"Playfair Display",serif;
+      font-size:48px;
+      line-height:1.02;
+      color:#fff;
+      text-shadow: 0 6px 18px rgba(0,0,0,0.35);
+    }
+    .hero-left p{margin:0 0 22px 0;font-size:17px;color:rgba(255,255,255,0.95)}
+    .cta{display:inline-block;background:rgba(0,0,0,0.75);color:#fff;padding:12px 20px;border-radius:6px;font-weight:700;letter-spacing:0.6px;text-transform:uppercase}
+    .cta:hover{background:var(--accent);color:var(--dark)}
+
+    /* ABOUT: сетка с фиксированной левой колонкой */
+    .about{
+      max-width:var(--max-width); margin:0 auto;
+      padding:48px 24px 80px;
+      display:grid;
+      grid-template-columns: var(--about-card-width) 1fr; /* левая колонка ширина карточки */
+      gap:40px;
+      align-items:start;
+      position:relative;
+    }
+
+    /* Вертикальная карточка — поднята и уходит в текст */
+    .about-card{
+      position: relative; /* важно: чтобы абсолютный .label-vertical позиционировался внутри карточки */
+      width: var(--about-card-width);
+      height: var(--about-card-height);
+      border-radius:10px;
+      overflow:hidden;
+      box-shadow:0 18px 45px rgba(0,0,0,0.14);
+      background:#f6f6f6;
+      /* Поднять в область hero: отрицательный margin-top */
+      margin-top: calc(-1 * var(--about-overlap));
+      /* Зайти в текстовую колонку: негативный правый отступ */
+      margin-right: calc(-1 * var(--about-into-text));
+      z-index:6;
+    }
+    .about-card img{width:100%;height:100%;object-fit:cover;display:block}
+
+    /* вертикальная надпись внутри карточки */
+    .label-vertical{
+      position:absolute;
+      left: 14px;
+      top:50%;
+      transform:translateY(-50%) rotate(-90deg);
+      transform-origin:left top;
+      font-family:"Playfair Display",serif;
+      letter-spacing:6px;
+      color: rgba(255,255,255,0.9);
+      font-size:18px;
+      opacity:0.6;
+      pointer-events:none;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.25);
+    }
+
+    .about-body{ padding: 6px 0; }
+    .about-body h2{ font-family:"Playfair Display",serif; font-size:34px; margin:6px 0 18px; color:var(--dark) }
+    .about-body p{ color:#6b635e; font-size:16px; margin:0 0 14px; line-height:1.65 }
+    .signature{ margin-top:18px }
+    .signature .name{ font-family:"Playfair Display",serif; font-size:18px; color:var(--dark) }
+    .signature .role{ color:var(--muted); font-size:13px }
+
+    /* Info row */
+    .info-row{ max-width:var(--max-width); margin:36px auto 120px; padding:0 24px; display:grid; grid-template-columns:1fr 1fr; gap:32px; }
+    .hours{ background:#fff; padding:22px; border-radius:8px; box-shadow:0 8px 20px rgba(0,0,0,0.04) }
+    .hours h3{ font-family:"Playfair Display",serif; margin:0 0 8px 0; color:var(--dark) }
+    .hours p{ margin:6px 0; color:#6b635e; font-weight:600 }
+    .studio img{ border-radius:10px; box-shadow:0 10px 30px rgba(0,0,0,0.06) }
+
+    footer{ padding:28px 24px; text-align:center; color:#8b8682; border-top:1px solid #eee }
+
+    /* Responsive */
+    @media (max-width:1200px){
+      :root{
+        --hero-height: 480px;
+        --about-overlap: 160px;
+        --about-into-text: 80px;
+        --about-card-width: 380px;
+        --about-card-height: 500px;
       }
-      body {
-        margin: 0;
-        font-family: "Poppins", sans-serif;
-        color: #333;
-        background: #fff;
-        line-height: 1.6;
-      }
-
-      a {
-        text-decoration: none;
-        color: inherit;
-      }
-
-      /* Header */
-      header {
-        padding: 24px 40px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-bottom: 1px solid #eee;
-        background-color: #fff;
-        position: sticky;
-        top: 0;
-        z-index: 100;
-      }
-
-      .logo {
-        font-family: "Playfair Display", serif;
-        font-size: 30px;
-        font-weight: 700;
-        letter-spacing: 1px;
-        color: #1a120b;
-      }
-
-      .logo span {
-        color: #c99a6b;
-      }
-
-      nav a {
-        font-weight: 500;
-        margin-left: 32px;
-        color: #333;
-        transition: color 0.3s ease;
-        letter-spacing: 0.5px;
-        font-size: 16px;
-      }
-
-      nav a:hover,
-      nav a:focus {
-        color: #c99a6b;
-        outline: none;
-      }
-
-      /* Hero */
-      .hero {
-        position: relative;
-        min-height: 100vh;
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        align-items: center;
-        padding: 0 17%;
-        gap: 40px;
-        overflow: visible;
-        background-color: #ccc;
-      }
-
-      .hero-content {
-        max-width: 600px;
-        order: 1;
-        margin-bottom: 10.5rem;
-      }
-
-      .hero-content h1 {
-        font-size: 3.2rem;
-        margin-bottom: 1rem;
-        font-family: "Playfair Display", serif;
-        color: #1a120b;
-      }
-
-      .hero-content p {
-        font-size: 1.18rem;
-        color: #555;
-        margin-bottom: 2.5rem;
-      }
-
-      .btn {
-        display: inline-block;
-        background-color: #1a120b;
-        color: #fff;
-        padding: 0.95rem 2.5rem;
-        font-weight: 600;
-        letter-spacing: 0.6px;
-        border-radius: 6px;
-        box-shadow: 0 6px 12px rgba(25, 18, 11, 0.25);
-        transition: background-color 0.3s ease, box-shadow 0.3s ease;
-        cursor: pointer;
-      }
-
-      .btn:hover,
-      .btn:focus {
-        background-color: #c99a6b;
-        box-shadow: 0 8px 20px rgba(201, 154, 107, 0.6);
-        outline: none;
-      }
-
-      .hero-image {
-        position: absolute;
-        top: 0;
-        right: 0;
-        height: 100%;
-        max-width: 55%;
-        width: auto;
-        z-index: 2;
-      }
-
-      .hero-image img {
-        height: 100%;
-        width: auto;
-        border-radius: 12px 0 0 12px;
-        object-fit: contain;
-        filter: brightness(0.75);
-        display: block;
-        position: static;
-      }
-
-      /* About Section */
-      .about {
-        display: flex;
-        align-items: center;
-        gap: 60px;
-        padding: 80px 8% 80px 8%;
-        max-width: 1200px;
-        margin: 0 auto;
-        position: relative;
-        z-index: 1;
-      }
-
-      .about-img {
-        position: absolute;
-        left: -9%;
-        width: 600px;
-        top: 40%;
-        transform: translateY(-50%);
-        z-index: 3;
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-        border-radius: 12px;
-      }
-
-      .about-img img {
-        width: 100%;
-        border-radius: 12px;
-        object-fit: cover;
-        display: block;
-      }
-
-      .about-text {
-        margin-left: 520px;
-        max-width: 600px;
-      }
-
-      .about-text h2 {
-        font-family: "Playfair Display", serif;
-        font-size: 44px;
-        margin-bottom: 20px;
-        position: relative;
-        padding-bottom: 14px;
-        letter-spacing: 0.5px;
-        color: #1a120b;
-      }
-
-      .about-text h2::after {
-        content: "";
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 70px;
-        height: 4px;
-        background-color: #c99a6b;
-        border-radius: 3px;
-      }
-
-      .about-text p {
-        font-size: 17px;
-        color: #555;
-        margin-bottom: 1.6rem;
-      }
-
-      /* Info Section */
-      .info {
-        display: flex;
-        gap: 60px;
-        padding: 80px 8%;
-        max-width: 1200px;
-        margin: 0 auto 80px;
-      }
-
-      .hours,
-      .video {
-        flex: 1;
-      }
-
-      .hours h3,
-      .video h3 {
-        font-family: "Playfair Display", serif;
-        font-size: 30px;
-        margin-bottom: 28px;
-        position: relative;
-        padding-bottom: 8px;
-        color: #1a120b;
-      }
-
-      .hours h3::after,
-      .video h3::after {
-        content: "";
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 50px;
-        height: 3px;
-        background-color: #c99a6b;
-        border-radius: 2px;
-      }
-
-      .hours p {
-        font-size: 16px;
-        color: #555;
-        margin: 10px 0;
-        letter-spacing: 0.3px;
-      }
-
-      .video img {
-        width: 100%;
-        border-radius: 12px;
-        object-fit: cover;
-        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
-        display: block;
-      }
-
-      /* Footer */
-      footer {
-        text-align: center;
-        padding: 25px 15px;
-        font-size: 14px;
-        color: #777;
-        border-top: 1px solid #eee;
-        background-color: #fff;
-      }
-
-      /* Responsive */
-
-      @media (max-width: 992px) {
-        .about {
-          position: static;
-          flex-direction: column;
-          text-align: center;
-          padding: 60px 5%;
-          gap: 40px;
-        }
-        .about-img {
-          position: static;
-          width: 100%;
-          max-width: 400px;
-          margin: 0 auto;
-          box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-          border-radius: 12px;
-        }
-        .about-text {
-          margin-left: 0;
-          max-width: 100%;
-          padding: 0 1rem;
-        }
-      }
-
-      @media (max-width: 768px) {
-        header {
-          padding: 15px 25px;
-        }
-
-        nav a {
-          margin-left: 18px;
-          font-size: 15px;
-        }
-
-        .hero {
-          grid-template-columns: 1fr;
-          min-height: auto;
-          padding-top: 40px;
-          padding-bottom: 40px;
-        }
-
-        .hero-content {
-          max-width: 100%;
-          padding: 0 2rem 2rem;
-          text-align: center;
-          order: 1;
-          margin-bottom: 3rem;
-        }
-
-        .hero-content h1 {
-          font-size: 2.4rem;
-        }
-
-        .hero-content p {
-          max-width: 100%;
-          margin-left: auto;
-          margin-right: auto;
-        }
-
-        .hero-image {
-          position: static;
-          order: 2;
-          width: 100%;
-          max-width: none;
-          height: auto;
-          margin-top: 1rem;
-        }
-
-        .hero-image img {
-          width: 100%;
-          height: auto;
-          border-radius: 12px 12px 0 0;
-          filter: brightness(0.75);
-        }
-      }
-
-      @media (max-width: 480px) {
-        nav a {
-          margin-left: 12px;
-          font-size: 14px;
-        }
-
-        .about-text h2 {
-          font-size: 32px;
-        }
-
-        .hours h3,
-        .video h3 {
-          font-size: 24px;
-        }
-      }
-    </style>
-  </head>
-
-  <body>
-    <header>
-      <div class="logo">Nailis<span>Hub</span></div>
-      <nav>
+      .hero-left h1{font-size:44px}
+      .about{ grid-template-columns: calc(var(--about-card-width)) 1fr; }
+    }
+    @media (max-width:900px){
+      .hero{ min-height: 360px; }
+      .hero-inner{ grid-template-columns: 1fr; padding:28px; text-align:center }
+      .hero-left{ order:2 }
+      .hero-left h1{ font-size:32px }
+      .about{ grid-template-columns:1fr; padding:28px; gap:24px; }
+      .about-card{ position: static; margin: 0 auto; margin-top: 0; margin-right: 0; width: 80%; height: 420px; }
+      .about-body{ text-align:center }
+      .info-row{ grid-template-columns:1fr; gap:18px }
+    }
+    @media (max-width:480px){
+      .hero-left h1{ font-size:26px }
+      .hero-left p{ font-size:15px }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container topbar">
+      <div class="logo">Nail<span>Hub</span></div>
+      <nav aria-label="Главное меню">
         <a href="#">Главная</a>
-        <a href="#about">Обо мне</a>
+        <a href="#about">О нас</a>
         <a href="/courses">Курсы</a>
         <a href="/auth/login">Войти</a>
-        <a href="/auth/register">Регистрация</a>
       </nav>
-    </header>
+    </div>
+  </header>
 
-    <section class="hero" role="banner" aria-label="Главный баннер">
-      <div class="hero-content">
-        <h1>"Чувствую себя как жена олигарха"</h1>
-        <p>
-          Так говорят мои клиенты после френча
-        </p>
-        <a href="#" class="btn" role="button" tabindex="0">ОНЛАЙН ОБУЧЕНИЕ</a>
-      </div>
-      <div class="hero-image" aria-label="Изображение с маникюром">
-        <img src="static/images/hero.png" alt="Nail art" loading="lazy" />
+  <main>
+    <!-- HERO (фон через background-image, начинается у самого верха секции) -->
+    <section class="hero" aria-label="Главный баннер">
+      <div class="hero-inner">
+        <div class="hero-left">
+          <div class="eyebrow">TRENDY SALON & SPA</div>
+          <h1>Больше чем просто<br/>Красивый маникюр</h1>
+          <p>Профессиональный маникюр, френч и авторские техники — обучение онлайн и в студии. Подчеркни свою красоту вместе с Nailis Hub.</p>
+          <a class="cta" href="#">DISCOVER NOW</a>
+        </div>
+        <div><!-- правая колонка визуально заполнена background-image --></div>
       </div>
     </section>
 
-    <section class="about" id="about" aria-labelledby="about-title">
-      <div class="about-img">
-        <img
-          src="static/images/hero11.jpg"
-          alt="Олеся - мастер ногтевого сервиса"
-          loading="lazy"
-        />
+    <!-- ABOUT: карточка начинается в hero (с отрицательным margin-top) и заходит во вторую колонку -->
+    <section id="about" class="about" aria-labelledby="about-title">
+      <div class="about-card" aria-hidden="true">
+        <img src="static/images/hero11.jpg" alt="Олеся - мастер" />
+        <div class="label-vertical">HAIR LOUNGE</div>
       </div>
-      <div class="about-text">
-        <h2 id="about-title">О нас</h2>
-        <p>
-          Привет! Меня зовут Олеся, я мастер ногтевого сервиса с 5-летним опытом
-          работы. За годы практики я обучила более 10 учеников, многие из
-          которых стали успешными мастерами и открыли свои студии.
-        </p>
-        <p>
-          Моя миссия — делиться знаниями и помогать людям освоить востребованную
-          профессию. На платформе Nailis Hub я собрала все свои лучшие методики
-          и практики, чтобы вы могли учиться в удобном формате.
-        </p>
+
+      <div class="about-body">
+        <h2 id="about-title">About Us</h2>
+        <p>Привет! Я Олеся — практикующий мастер ногтевого сервиса. За 5 лет в индустрии я выстроила авторскую методику френча и комплексных техник, которые помогают моим ученикам быстро выйти на стабильный доход и уверенность в своих силах.</p>
+
+        <p>На платформе Nailis Hub вы найдёте понятные пошаговые курсы, записи живых занятий и персональные разборы ошибок — всё, чтобы стать мастером, которого выбирают.</p>
+
+        <div class="signature">
+          <div class="name">Mayline</div>
+          <div class="role">James Hansen — Director</div>
+        </div>
       </div>
     </section>
 
-    <section class="info" aria-label="Информация о часах работы и студии">
+    <section class="info-row" aria-label="Информация">
       <div class="hours">
-        <h3>Часы работы</h3>
-        <p>Понедельник — Пятница: 9:00 — 22:00</p>
-        <p>Суббота: 10:00 — 19:00</p>
-        <p>Воскресенье: 10:00 — 19:00</p>
+        <h3>Opening Hours</h3>
+        <p>MONDAY — FRIDAY: 9AM - 22PM</p>
+        <p>SATURDAY: 10AM - 19PM</p>
+        <p>SUNDAY: 10AM - 19PM</p>
       </div>
-      <div class="video">
+      <div class="studio">
         <h3>Наша студия</h3>
-        <img
-          src="static/images/2147878838.jpg"
-          alt="Фото студии Nailis Hub"
-          loading="lazy"
-        />
+        <img src="static/images/2147878838.jpg" alt="Фото студии" />
       </div>
     </section>
+  </main>
 
-    <footer>&copy; 2025 Nailis Hub. Все права защищены.</footer>
-  </body>
+  <footer>&copy; 2025 Nailis Hub. Все права защищены.</footer>
+</body>
 </html>

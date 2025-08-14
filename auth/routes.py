@@ -154,7 +154,6 @@ async def login_api(
             db=db,
             redirect_url="/courses",
         )
-        logger.info("Пользователь успешно вошел: %s", username)
         return response
     except Exception:
         logger.warning(

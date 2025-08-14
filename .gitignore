@@ -3,8 +3,6 @@
 *.__pycache__/
 **/__pycache__/
 .pytest_cache/
-alembic.ini
-create_admin.py
 *.pyc
 docker/
 scripts/

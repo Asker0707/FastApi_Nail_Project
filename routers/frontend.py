@@ -69,7 +69,8 @@ async def dashboard_page(request: Request,
     Отображает дашборд пользователя с его последними заметками.
 
     Args:
-        deps (dict): Общие зависимости (db, current_user).
+        db (AsyncSession): Асинхронная сессия базы данных
+        current_user (models.User): Текущий аутентифицированный пользователь
         request (Request): HTTP запрос.
 
     Returns:
@@ -109,7 +110,8 @@ async def courses_page(request: Request,
     Страница отображает список всех курсов.
 
     Args:
-        deps (dict): Общие зависимости (db, current_user).
+        db (AsyncSession): Асинхронная сессия базы данных
+        current_user (models.User): Текущий аутентифицированный пользователь
         request (Request): HTTP запрос.
 
     Returns:
@@ -137,7 +139,8 @@ async def course_page(
 
     Args:
         course_id (UUID): Идентификатор курса.
-        deps (dict): Общие зависимости (db, current_user).
+        db (AsyncSession): Асинхронная сессия базы данных
+        current_user (models.User): Текущий аутентифицированный пользователь
         request (Request): HTTP запрос.
 
     Raises:
@@ -177,7 +180,7 @@ async def profile_page(request: Request,
     Отображает страницу профиля пользователя с личными данными.
 
     Args:
-        deps (dict): Общие зависимости (db, current_user).
+        current_user (models.User): Текущий аутентифицированный пользователь
         request (Request): HTTP запрос.
 
     Returns:

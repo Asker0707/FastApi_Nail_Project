@@ -12,7 +12,6 @@ from fastapi.responses import RedirectResponse
 
 from core.config import settings
 
-SameSiteType = Literal["lax", "strict", "none"]
 logger = logging.getLogger(__name__)
 
 
@@ -38,7 +37,7 @@ def set_auth_cookie(
             max_age=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
             expires=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
             secure=settings.COOKIE_SECURE,
-            samesite="lax",
+            samesite=settings.SAMESITE,
         )
         logger.debug("Установлен cookie access_token для аутентификации.")
     except (TypeError, ValueError) as e:
@@ -80,10 +79,10 @@ def create_flash_error_redirect(url: str, message: str) -> RedirectResponse:
         response.set_cookie(
             key="flash_error",
             value=quote(message),
-            max_age=300,
+            max_age=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
             httponly=True,
-            samesite="lax",
-            secure=True,
+            secure=settings.COOKIE_SECURE,
+            samesite=settings.SAMESITE,
         )
         logger.debug("Установлено flash-сообщение в cookie: %s", message)
     except (TypeError, ValueError) as e:

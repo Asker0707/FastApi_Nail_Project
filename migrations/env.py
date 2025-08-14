@@ -6,7 +6,7 @@ from logging.config import fileConfig
 from alembic import context
 from sqlalchemy import pool
 from sqlalchemy.ext.asyncio import create_async_engine
-
+from db import models
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 
