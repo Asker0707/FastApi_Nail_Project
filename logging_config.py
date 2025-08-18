@@ -50,6 +50,5 @@ def setup_logging():
     logging.config.dictConfig(LOGGING_CONFIG)
 
 
-# Авто-инициализация логирования
 if not logging.getLogger().handlers:
     setup_logging()

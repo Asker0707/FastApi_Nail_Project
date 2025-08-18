@@ -16,7 +16,6 @@
 - Использует шаблоны Jinja2 для рендеринга HTML
 """
 
-import os
 from uuid import UUID
 
 from fastapi import (
@@ -36,6 +35,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
 
+from .file_utils import save_upload_file, create_dir, delete_file_async
 from auth.dependencies import require_admin
 from db import models
 from db.database import get_db
@@ -65,21 +65,6 @@ async def admin_lessons_list(
     db: AsyncSession = Depends(get_db),
     current_user: models.User = Depends(require_admin),
 ):
-    """
-    Отображает список уроков для указанного курса.
-
-    Args:
-        request (Request): Объект HTTP запроса
-        course_id (UUID): Идентификатор курса
-        db (AsyncSession): Сессия базы данных
-        current_user (models.User): Текущий пользователь (администратор)
-
-    Returns:
-        HTMLResponse: HTML страница со списком уроков
-
-    Raises:
-        HTTPException: 404 если курс не найден
-    """
     stmt = (
         select(models.Course)
         .options(selectinload(models.Course.lessons))
@@ -110,21 +95,6 @@ async def new_lesson_page(
     db: AsyncSession = Depends(get_db),
     current_user: models.User = Depends(require_admin),
 ):
-    """
-    Отображает форму для создания нового урока.
-
-    Args:
-        request (Request): Объект HTTP запроса
-        course_id (UUID): Идентификатор курса
-        db (AsyncSession): Сессия базы данных
-        current_user (models.User): Текущий пользователь (администратор)
-
-    Returns:
-        HTMLResponse: HTML страница с формой создания урока
-
-    Raises:
-        HTTPException: 404 если курс не найден
-    """
     stmt = select(models.Course).filter(models.Course.id == course_id)
     result = await db.execute(stmt)
     course = result.scalars().first()
@@ -134,10 +104,7 @@ async def new_lesson_page(
 
     return templates.TemplateResponse(
         "admin/lesson_form.html",
-        {"request": request,
-         "course": course,
-         "lesson": None,
-         "user": current_user},
+        {"request": request, "course": course, "lesson": None, "user": current_user},
     )
 
 
@@ -150,23 +117,6 @@ async def create_lesson(
     db: AsyncSession = Depends(get_db),
     current_user: models.User = Depends(require_admin),
 ):
-    """
-    Создает новый урок в указанном курсе.
-
-    Args:
-        course_id (UUID): Идентификатор курса
-        title (str): Название урока
-        text_content (str): Текстовое содержание урока
-        video_file (UploadFile): Видеофайл для урока (опционально)
-        db (AsyncSession): Сессия базы данных
-        current_user (models.User): Текущий пользователь (администратор)
-
-    Returns:
-        RedirectResponse: Перенаправление на список уроков курса
-
-    Raises:
-        HTTPException: 404 если курс не найден
-    """
     stmt = select(models.Course).filter(models.Course.id == course_id)
     result = await db.execute(stmt)
     course = result.scalars().first()
@@ -176,10 +126,10 @@ async def create_lesson(
 
     video_path = None
     if video_file and video_file.filename:
-        os.makedirs("static/videos", exist_ok=True)
-        save_path = f"static/videos/{video_file.filename}"
-        with open(save_path, "wb") as f:
-            f.write(video_file.file.read())
+        save_dir = "static/videos"
+        await create_dir(save_dir)
+        save_path = f"{save_dir}/{video_file.filename}"
+        await save_upload_file(video_file, save_path)
         video_path = save_path
 
     lesson = models.Lesson(
@@ -193,8 +143,7 @@ async def create_lesson(
     await db.refresh(lesson)
 
     return RedirectResponse(
-        f"/admin/courses/{course_id}/lessons",
-        status_code=status.HTTP_303_SEE_OTHER
+        f"/admin/courses/{course_id}/lessons", status_code=status.HTTP_303_SEE_OTHER
     )
 
 
@@ -205,21 +154,6 @@ async def edit_lesson_page(
     db: AsyncSession = Depends(get_db),
     current_user: models.User = Depends(require_admin),
 ):
-    """
-    Отображает форму редактирования существующего урока.
-
-    Args:
-        request (Request): Объект HTTP запроса
-        lesson_id (UUID): Идентификатор урока
-        db (AsyncSession): Сессия базы данных
-        current_user (models.User): Текущий пользователь (администратор)
-
-    Returns:
-        HTMLResponse: HTML страница с формой редактирования урока
-
-    Raises:
-        HTTPException: 404 если урок не найден
-    """
     stmt = (
         select(models.Lesson)
         .options(selectinload(models.Lesson.course))
@@ -252,23 +186,6 @@ async def update_lesson(
     db: AsyncSession = Depends(get_db),
     current_user: models.User = Depends(require_admin),
 ):
-    """
-    Обновляет данные существующего урока.
-
-    Args:
-        lesson_id (UUID): Идентификатор урока
-        title (str): Новое название урока
-        text_content (str): Новое текстовое содержание
-        video_file (UploadFile): Новый видеофайл (опционально)
-        db (AsyncSession): Сессия базы данных
-        current_user (models.User): Текущий пользователь (администратор)
-
-    Returns:
-        RedirectResponse: Перенаправление на список уроков курса
-
-    Raises:
-        HTTPException: 404 если урок не найден
-    """
     stmt = select(models.Lesson).filter(models.Lesson.id == lesson_id)
     result = await db.execute(stmt)
     lesson = result.scalars().first()
@@ -277,13 +194,14 @@ async def update_lesson(
         raise HTTPException(404, "Урок не найден")
 
     if video_file and video_file.filename:
-        if lesson.video_path and os.path.exists(lesson.video_path):
-            os.remove(lesson.video_path)
+        if lesson.video_path:
+            await delete_file_async(lesson.video_path)
 
-        os.makedirs("static/videos", exist_ok=True)
-        save_path = f"static/videos/{video_file.filename}"
-        with open(save_path, "wb") as f:
-            f.write(video_file.file.read())
+        save_dir = "static/videos"
+        await create_dir(save_dir)
+        save_path = f"{save_dir}/{video_file.filename}"
+
+        await save_upload_file(video_file, save_path)
         lesson.video_path = save_path
 
     lesson.title = title
@@ -291,7 +209,7 @@ async def update_lesson(
     await db.commit()
 
     lesson_cache_key = get_lesson_cache_key(lesson_id)
-    redis.delete(lesson_cache_key)
+    await redis.delete(lesson_cache_key)
 
     return RedirectResponse(
         f"/admin/courses/{lesson.course_id}/lessons",
@@ -305,20 +223,6 @@ async def delete_lesson(
     db: AsyncSession = Depends(get_db),
     current_user: models.User = Depends(require_admin),
 ):
-    """
-    Удаляет урок и связанные с ним ресурсы.
-
-    Args:
-        lesson_id (UUID): Идентификатор урока
-        db (AsyncSession): Сессия базы данных
-        current_user (models.User): Текущий пользователь (администратор)
-
-    Returns:
-        RedirectResponse: Перенаправление на список уроков курса
-
-    Raises:
-        HTTPException: 404 если урок не найден
-    """
     stmt = select(models.Lesson).filter(models.Lesson.id == lesson_id)
     result = await db.execute(stmt)
     lesson = result.scalars().first()
@@ -328,14 +232,14 @@ async def delete_lesson(
 
     course_id = lesson.course_id
 
-    if lesson.video_path and os.path.exists(lesson.video_path):
-        os.remove(lesson.video_path)
+    if lesson.video_path:
+        await delete_file_async(lesson.video_path)
 
     await db.delete(lesson)
     await db.commit()
 
     lesson_cache_key = get_lesson_cache_key(lesson_id)
-    redis.delete(lesson_cache_key)
+    await redis.delete(lesson_cache_key)
 
     pattern = f"user:*:lesson:{lesson_id}:completed"
     keys = redis.keys(pattern)
@@ -343,6 +247,5 @@ async def delete_lesson(
         redis.delete(*keys)
 
     return RedirectResponse(
-        f"/admin/courses/{course_id}/lessons",
-        status_code=status.HTTP_303_SEE_OTHER
+        f"/admin/courses/{course_id}/lessons", status_code=status.HTTP_303_SEE_OTHER
     )

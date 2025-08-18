@@ -11,3 +11,4 @@ app.log
 .ruff_cache/
 .mypy_cache/
 venv/
+.flake8

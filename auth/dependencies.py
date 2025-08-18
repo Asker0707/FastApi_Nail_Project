@@ -56,23 +56,15 @@ async def get_current_user(
         logger.info("JWT токен (access_token) отсутствует в cookie.")
         if raise_exc:
             raise HTTPException(
-                status_code=status.HTTP_307_TEMPORARY_REDIRECT,
+                status_code=status.HTTP_303_SEE_OTHER,
                 headers={"Location": "/auth/login"}
             )
         return None
 
     email = await decode_token(access_token, raise_exc=False)
-    if not email:
-        logger.info("Токен недействителен или email не найден в токене.")
-        if raise_exc:
-            raise HTTPException(
-                status_code=status.HTTP_307_TEMPORARY_REDIRECT,
-                headers={"Location": "/auth/login"}
-            )
-        return None
-
     result = await db.execute(select(models.User).where(models.User.email == email))
     user = result.scalars().first()
+
     if not user:
         logger.warning(
             "Пользователь с email %s не найден в базе данных.", email)

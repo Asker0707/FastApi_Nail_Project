@@ -18,7 +18,7 @@ import logging
 
 from fastapi import HTTPException, status
 from fastapi.responses import RedirectResponse
-from passlib.context import CryptContext  # type: ignore
+from passlib.context import CryptContext
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 

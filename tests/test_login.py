@@ -1,3 +1,20 @@
+"""
+    Тесты для проверки авторизации пользователей (login) в FastAPI-приложении.
+
+    Сценарии:
+        - test_login_success:
+            Проверяет успешный вход с корректными данными.
+            Ожидается:
+                * редирект на /courses,
+                * установка cookie access_token.
+
+        - test_login_wrong_credentials:
+            Проверяет вход с неверными учётными данными.
+            Ожидается:
+                * редирект обратно на /auth/login,
+                * установка flash-сообщения об ошибке в cookie.
+"""
+
 from urllib.parse import unquote
 
 import pytest

@@ -52,7 +52,7 @@ class Settings(BaseSettings):
     POSTGRES_DB: str
     LOGIN_ATTEMPTS_LIMIT: int
     REFRESH_TOKEN_EXPIRE_DAYS: int
-    
+
     class Config:
         """Конфигурация для загрузки настроек.
 
@@ -67,4 +67,4 @@ class Settings(BaseSettings):
         env_file_encoding = "utf-8"
 
 
-settings = Settings()  # type: ignore[call-arg]
+settings = Settings()

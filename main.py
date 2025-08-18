@@ -64,7 +64,6 @@ async def read_root(
     )
 
 
-# Подключение роутеров
 app.include_router(frontend.router)
 app.include_router(notes.router)
 app.include_router(user_profile.router)

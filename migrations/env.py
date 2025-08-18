@@ -9,14 +9,11 @@ from sqlalchemy.ext.asyncio import create_async_engine
 from db import models
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-
-# Импорт вашего Settings
 from core.config import settings
 from db.database import Base
 
 config = context.config
 
-# Подставляем DATABASE_URL из настроек pydantic
 config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
 
 fileConfig(config.config_file_name)

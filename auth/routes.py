@@ -51,11 +51,6 @@ logger = logging.getLogger(__name__)
 
 FLASH_EXPIRE_SECONDS = 300
 
-
-# -----------------------
-# Вспомогательные функции
-# -----------------------
-
 def render_template_with_flash(request: Request, template_name: str, context: dict = {}) -> HTMLResponse:
     """
     Рендерит шаблон Jinja2 и автоматически извлекает flash_error из cookie.
@@ -137,9 +132,6 @@ async def refresh_user_tokens(user: models.User, redirect_url: str = "/courses")
     return create_auth_response(user, redirect_url)
 
 
-# -----------------------
-# Роутеры регистрации
-# -----------------------
 
 @router.post("/register")
 async def register_form(
@@ -205,9 +197,6 @@ async def register_page(request: Request):
     return render_template_with_flash(request, "register.html")
 
 
-# -----------------------
-# Роутеры логина
-# -----------------------
 
 @router.post("/login")
 async def login_api(
@@ -254,10 +243,6 @@ async def login_page(request: Request):
     return render_template_with_flash(request, "login.html")
 
 
-# -----------------------
-# Роутеры админского логина
-# -----------------------
-
 @router.post("/admin_login")
 async def admin_login_api(
     form_data: OAuth2PasswordRequestForm = Depends(),
@@ -294,9 +279,6 @@ async def admin_login_api(
         return create_flash_error_redirect("/", error_msg)
 
 
-# -----------------------
-# Роутеры выхода и refresh токена
-# -----------------------
 
 @router.get("/logout")
 async def logout(request: Request) -> RedirectResponse:

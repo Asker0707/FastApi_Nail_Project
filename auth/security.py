@@ -13,8 +13,8 @@ from datetime import datetime, timedelta, timezone
 from typing import Optional
 
 from fastapi import HTTPException, status
-from jose import JWTError, jwt  # type: ignore
-from passlib.context import CryptContext  # type: ignore
+from jose import JWTError, jwt
+from passlib.context import CryptContext
 from redis.exceptions import RedisError
 
 from core.config import settings
@@ -25,7 +25,6 @@ logger = logging.getLogger(__name__)
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
-# -------------------- Вспомогательные функции -------------------- #
 
 def utc_now() -> datetime:
     """Возвращает текущее UTC-время"""
@@ -42,7 +41,6 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
 
 
-# -------------------- JWT токены -------------------- #
 
 def create_jwt_token(
     data: dict, expires_delta: timedelta,
@@ -73,7 +71,6 @@ def create_refresh_token(data: dict) -> str:
     return create_jwt_token(data, timedelta(days=30))
 
 
-# -------------------- Черный список токенов -------------------- #
 
 async def add_to_blacklist(token: str, raise_on_error: bool = False):
     """Добавить JWT токен в черный список Redis на время жизни токена"""
@@ -98,7 +95,6 @@ async def is_token_blacklisted(token: str) -> bool:
         return False
 
 
-# -------------------- Декодирование и проверка токена -------------------- #
 
 async def decode_token(token: Optional[str], raise_exc: bool = True) -> Optional[str]:
     """
