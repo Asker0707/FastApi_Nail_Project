@@ -3,10 +3,10 @@
 from urllib.parse import unquote
 
 import pytest
-from models import User
+from db.models import User
 from sqlalchemy import select
 
-from auth.utils import get_password_hash
+from auth.security import get_password_hash
 
 
 @pytest.mark.asyncio

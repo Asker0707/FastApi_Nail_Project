@@ -3,15 +3,43 @@
 
 {% block extra_css %}
 <style>
+  .dashboard-header {
+    background: linear-gradient(135deg, #f7e7de, #fffaf7);
+    border-radius: 1.5rem;
+    padding: 2rem;
+    box-shadow: 0 6px 18px rgba(163, 107, 94, 0.15);
+    margin-bottom: 2rem;
+  }
+  .dashboard-header h2 {
+    font-weight: 700;
+    color: #7b5a50;
+  }
+  .stat-card {
+    border-radius: 1rem;
+    background: #fff;
+    padding: 1.5rem;
+    box-shadow: 0 4px 14px rgba(163, 107, 94, 0.12);
+    text-align: center;
+    transition: transform 0.2s ease;
+  }
+  .stat-card:hover {
+    transform: translateY(-4px);
+  }
+  .stat-icon {
+    font-size: 2rem;
+    color: #a36b5e;
+    margin-bottom: 0.5rem;
+  }
   .note-card {
     border-radius: 1rem;
     background: #fffdf9;
     box-shadow: 0 6px 18px rgba(163, 107, 94, 0.12);
-    transition: box-shadow 0.3s ease;
+    transition: box-shadow 0.3s ease, transform 0.2s ease;
     cursor: pointer;
   }
   .note-card:hover {
     box-shadow: 0 12px 36px rgba(163, 107, 94, 0.24);
+    transform: translateY(-3px);
   }
   .note-header {
     font-weight: 600;
@@ -40,8 +68,17 @@
 
 {% block content %}
 <div class="container mt-4">
-  <h2 class="mb-4">Добро пожаловать, <span style="color: #7b5a50;">{{ user.full_name }}</span>! <i class="bi bi-person-circle"></i></h2>
 
+  <!-- Заголовок -->
+  <div class="dashboard-header">
+    <h2>Добро пожаловать, <span style="color: #a36b5e;">{{ user.full_name }}</span>! 
+      <i class="bi bi-person-circle"></i>
+    </h2>
+    <p class="text-muted mb-0">Рады видеть вас снова 🌸 Продолжайте обучение, добавляйте заметки и отслеживайте свой прогресс.</p>
+  </div>
+
+
+  <!-- Заметки -->
   <h4 class="mb-3">🗒️ Ваши заметки</h4>
 
   {% if notes %}
@@ -73,5 +110,25 @@
       <p>Заметок пока нет. Начните учиться и добавлять заметки к урокам!</p>
     </div>
   {% endif %}
+  <!-- Продолжить урок -->
+{% if current_lesson %}
+<h4 class="mb-3">▶️ Продолжить обучение</h4>
+<a href="/lessons/{{ current_lesson.id }}" class="text-decoration-none">
+  <div class="card note-card p-4 mb-4 d-flex justify-content-between align-items-center" 
+       style="border-radius: 1.5rem; background: linear-gradient(135deg, #ffe5d4, #fff7f0); 
+              box-shadow: 0 6px 18px rgba(163, 107, 94, 0.15); transition: transform 0.2s ease;">
+    <div>
+      <h5 class="note-header mb-1" style="font-weight: 700; color: #a36b5e;">
+        <i class="bi bi-play-circle me-2"></i>{{ current_lesson.title }}
+      </h5>
+      <p class="text-muted mb-0" style="color: #7b5a50;">Вы остановились на этом уроке</p>
+    </div>
+    <div>
+      <i class="bi bi-arrow-right-circle" style="font-size: 2rem; color: #a36b5e;"></i>
+    </div>
+  </div>
+</a>
+{% endif %}
+
 </div>
 {% endblock %}

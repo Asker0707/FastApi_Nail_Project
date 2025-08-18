@@ -51,7 +51,8 @@ class Settings(BaseSettings):
     POSTGRES_PASSWORD: str
     POSTGRES_DB: str
     LOGIN_ATTEMPTS_LIMIT: int
-
+    REFRESH_TOKEN_EXPIRE_DAYS: int
+    
     class Config:
         """Конфигурация для загрузки настроек.
 

@@ -19,7 +19,7 @@ from db.database import get_db
 from schemas.user_profile import ProfileDataResponse, LastLessonItem
 
 
-router = APIRouter()
+router = APIRouter(tags=["Данные профиля"])
 
 
 @router.get("/api/profile_data", response_model=ProfileDataResponse)

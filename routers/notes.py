@@ -25,7 +25,7 @@ from db import models
 from db.database import get_db
 from schemas.note import NoteIn, NoteOut, MessageOut
 
-router = APIRouter(prefix="/lessons", tags=["lessons"])
+router = APIRouter(prefix="/lessons", tags=["Заметки"])
 
 
 @router.get("/{lesson_id}/notes", response_model=list[NoteOut])

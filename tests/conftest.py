@@ -1,7 +1,7 @@
 # tests/conftest.py
 import pytest
 from httpx import ASGITransport, AsyncClient
-from models import Base
+from db.models import Base
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.pool import StaticPool
 

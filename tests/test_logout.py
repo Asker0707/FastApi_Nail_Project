@@ -1,7 +1,7 @@
 import pytest
-from models import User
+from db.models import User
 
-from auth.utils import get_password_hash
+from auth.security import get_password_hash
 
 
 @pytest.mark.asyncio

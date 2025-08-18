@@ -1,9 +1,9 @@
 from urllib.parse import unquote
 
 import pytest
-from models import User
+from db.models import User
 
-from auth.utils import get_password_hash
+from auth.security import get_password_hash
 
 
 @pytest.mark.asyncio
@@ -22,7 +22,7 @@ async def test_login_success(async_client, async_db):
     response = await async_client.post(
         "/auth/login",
         data={
-            "username": "login@example.com",  # OAuth2PasswordRequestForm
+            "username": "login@example.com",
             "password": "secure123",
         },
     )
@@ -39,9 +39,6 @@ async def test_login_success(async_client, async_db):
 @pytest.mark.asyncio
 async def test_login_wrong_credentials(async_client, async_db):
     """Попытка логина с неверными данными"""
-    # Убедимся, что БД пуста (пользователь не создаётся)
-    # Не удаляем явно, чтобы не нарушить FK через Alembic
-    # Просто используем email, которого не существует
 
     response = await async_client.post(
         "/auth/login",
@@ -53,4 +50,5 @@ async def test_login_wrong_credentials(async_client, async_db):
 
     # Проверка flash-сообщения в cookie
     assert "flash_error" in response.cookies
-    assert unquote(response.cookies["flash_error"]) == "Неверный email или пароль"
+    assert unquote(response.cookies["flash_error"]
+                   ) == "Неверный email или пароль"

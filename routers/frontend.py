@@ -34,7 +34,7 @@ from db.database import get_db
 
 logger = logging.getLogger(__name__)
 
-router = APIRouter()
+router = APIRouter(tags=["Получение html страниц"])
 templates = Jinja2Templates(directory="templates")
 
 
@@ -60,13 +60,15 @@ async def login_page(request: Request):
     return response
 
 
-@router.get("/dashboard", response_class=HTMLResponse)
-async def dashboard_page(request: Request,
-                         db: AsyncSession = Depends(get_db),
-                         current_user: models.User = Depends(get_current_user)
-                         ):
+@router.get("/user/dashboard", response_class=HTMLResponse)
+async def dashboard_page(
+    request: Request,
+    db: AsyncSession = Depends(get_db),
+    current_user: models.User = Depends(get_current_user),
+):
     """
     Отображает дашборд пользователя с его последними заметками.
+    А также последний не завершенный урок.
 
     Args:
         db (AsyncSession): Асинхронная сессия базы данных
@@ -91,13 +93,35 @@ async def dashboard_page(request: Request,
             "lesson_id": lesson.id,
             "lesson_title": lesson.title,
             "content": note.content,
+            "created_at": note.created_at,
         }
         for note, lesson in notes
     ]
 
+    completed_stmt = select(models.LessonCompletion.lesson_id).filter(
+        models.LessonCompletion.user_id == current_user.id
+    )
+    completed_result = await db.execute(completed_stmt)
+    completed_lessons = {row[0] for row in completed_result.fetchall()}
+
+    lesson_stmt = select(models.Lesson).order_by(models.Lesson.id)
+    lesson_result = await db.execute(lesson_stmt)
+    all_lessons = lesson_result.scalars().all()
+
+    current_lesson = None
+    for lesson in all_lessons:
+        if lesson.id not in completed_lessons:
+            current_lesson = lesson
+            break
+
     return templates.TemplateResponse(
         "dashboard.html",
-        {"request": request, "user": current_user, "notes": note_data},
+        {
+            "request": request,
+            "user": current_user,
+            "notes": note_data,
+            "current_lesson": current_lesson,
+        },
     )
 
 
@@ -173,7 +197,7 @@ async def course_page(
     )
 
 
-@router.get("/profile", response_class=HTMLResponse)
+@router.get("/user/profile", response_class=HTMLResponse)
 async def profile_page(request: Request,
                        current_user: models.User = Depends(get_current_user)):
     """
@@ -203,7 +227,7 @@ async def lesson_page(
     Отображает страницу урока.
 
     Args:
-        
+
         lesson_id: id урока
         db (AsyncSession): Асинхронная сессия базы данных
         current_user (models.User): Текущий аутентифицированный пользователь

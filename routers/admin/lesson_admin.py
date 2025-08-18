@@ -42,7 +42,7 @@ from db.database import get_db
 from redis_client import redis
 
 templates = Jinja2Templates(directory="templates/")
-router = APIRouter(prefix="/admin", tags=["lessons"])
+router = APIRouter(prefix="/admin", tags=["Админские маршруты для уроков"])
 
 
 def get_lesson_cache_key(lesson_id: UUID) -> str:

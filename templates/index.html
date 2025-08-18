@@ -1,255 +1,320 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Nailis Hub — исправленная верстка</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Nailis Hub — динамичная верстка</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;600&display=swap"
+  rel="stylesheet"
+/>
 
-  <style>
-    :root{
-      --accent: #c99a6b;
-      --dark: #1a120b;
-      --muted: #7f776f;
-      --max-width: 1200px;
+<style>
+:root {
+  --accent: #c99a6b;
+  --dark: #1a120b;
+  --muted: #7f776f;
+  --bg-light: #fefcfb;
+  --max-width: 1200px;
 
-      /* Подгоняй эти значения для точного кадрирования */
-      --hero-height: 590px;        /* высота hero секции */
-      --hero-overlay: 0.18;        /* затемнение поверх фонового изображения */
-      --hero-offset: 140px;        /* смещение фонового изображения влево (увеличь — кадр сместится влево) */
+  --hero-height: 590px;
+  --hero-overlay: 0.18;
+  --hero-offset: 140px;
 
-      --about-overlap: 160px;      /* насколько about-картинка поднята вверх (px) */
-      --about-into-text: 100px;    /* насколько она заходит в текстовую колонку (px) */
-      --about-card-width: 420px;   /* ширина вертикальной карточки */
-      --about-card-height: 540px;  /* высота карточки */
-    }
+  --about-overlap: 160px;
+  --about-into-text: 100px;
+  --about-card-width: 420px;
+  --about-card-height: 540px;
 
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      font-family:"Poppins",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
-      color:var(--dark);
-      background:#fff;
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
-      line-height:1.6;
-    }
-    img{display:block;max-width:100%;height:auto}
+  --transition: 0.35s ease-in-out;
+}
 
-    .container{max-width:var(--max-width);margin:0 auto;padding:0 24px}
+* { box-sizing: border-box; }
+html, body { height: 100%; scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  color: var(--dark);
+  background: var(--bg-light);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.6;
+}
+img { display: block; max-width: 100%; height: auto; border-radius: 8px; transition: transform var(--transition);}
+img:hover { transform: scale(1.02); }
 
-    /* header */
-    header{
-      position:sticky; top:0; z-index:120;
-      background:#fff; border-bottom:1px solid #eee;
-      box-shadow:0 2px 6px rgba(0,0,0,0.03);
-    }
-    .topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 0}
-    .logo{font-family:"Playfair Display",serif;font-weight:700;font-size:26px;color:var(--dark)}
-    .logo span{color:var(--accent)}
-    nav{display:flex;gap:18px;align-items:center}
-    nav a{color:var(--muted);font-weight:600;font-size:14px;text-decoration:none}
-    nav a:hover{color:var(--accent)}
+.container { max-width: var(--max-width); margin: 0 auto; padding: 0 24px; }
 
-    /* HERO — фон картинкой, не выходит за фон */
-    .hero{
-      position:relative;
-      background-color:#85817e;
-      /* путь к твоей hero картинке */
-      background-image: url("static/images/hero.png");
-      /* смещаем фон немного влево для нужного кадра (подправь --hero-offset) */
-      background-position: calc(100% - var(--hero-offset)) center;
-      background-repeat: no-repeat;
-      overflow:hidden; /* картинка не вылазит за фон */
-      min-height: var(--hero-height);
-      display:flex;
-      align-items:center;
-    }
+/* HEADER */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 120;
+  background: #fff;
+  border-bottom: 1px solid #eee;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+.topbar {
+  display: flex; align-items: center; justify-content: space-between; padding: 12px 0;
+}
+.logo { font-family:"Playfair Display", serif; font-weight:700; font-size:26px; color: var(--dark); letter-spacing:1px;}
+.logo span { color: var(--accent);}
+nav { display:flex; gap:18px; align-items:center; }
+nav a { color: var(--muted); font-weight:600; font-size:14px; text-decoration:none; position: relative;}
+nav a::after {
+  content:""; position:absolute; left:0; bottom:-4px; width:0; height:2px; background:var(--accent); transition: width var(--transition);
+}
+nav a:hover::after { width:100%; }
+nav a:hover { color: var(--accent); }
 
-    /* затемнение для читаемости текста */
-    .hero::after{
-      content:""; position:absolute; inset:0;
-      background: linear-gradient(180deg, rgba(0,0,0,var(--hero-overlay)) 0%, rgba(0,0,0,0.07) 60%);
-      pointer-events:none;
-    }
+/* HERO */
+.hero {
+  position: relative;
+  background-color: #85817e;
+  background-image: url("static/images/hero.png");
+  background-position: calc(100% - var(--hero-offset)) center;
+  background-repeat: no-repeat;
+  overflow: hidden;
+  min-height: var(--hero-height);
+  display: flex;
+  align-items: center;
+  transition: background-position 0.5s ease;
+}
+.hero::after {
+  content:""; position:absolute; inset:0;
+  background: linear-gradient(180deg, rgba(0,0,0,var(--hero-overlay)) 0%, rgba(0,0,0,0.07) 60%);
+  pointer-events:none;
+}
+.hero-inner {
+  position: relative; z-index:2; max-width: var(--max-width); margin:0 auto; width:100%;
+  padding:18px 24px;
+  display: grid; grid-template-columns:46% 54%; gap:20px; align-items:center;
+}
+.hero-left { color:#fff; max-width:640px; }
+.eyebrow { font-size:12px; color:rgba(255,255,255,0.9); letter-spacing:2px; margin-bottom:12px;}
+.hero-left h1 { margin:0 0 16px 0; font-family:"Playfair Display", serif; font-size:48px; line-height:1.05; text-shadow:0 6px 18px rgba(0,0,0,0.35);}
+.hero-left p { margin:0 0 22px 0; font-size:17px; color: rgba(255,255,255,0.95);}
+.cta {
+  display:inline-block; background: rgba(0,0,0,0.75); color:#fff; padding:14px 24px; border-radius:6px;
+  font-weight:700; letter-spacing:0.6px; text-transform:uppercase;
+  transition: background var(--transition), transform var(--transition);
+}
+.cta:hover { background:var(--accent); color:var(--dark); transform: translateY(-2px); }
 
-    .hero-inner{
-      position:relative; z-index:2;
-      max-width:var(--max-width); margin:0 auto; width:100%;
-      padding: 18px 24px; /* небольшой верхний padding чтобы текст не прилипал */
-      display:grid;
-      grid-template-columns: 46% 54%; /* текст в левой колонке */
-      gap:20px;
-      align-items:center;
-    }
+/* ABOUT */
+.about {
+  max-width: var(--max-width);
+  margin:0 auto;
+  padding:60px 24px 100px;
+  display:grid;
+  grid-template-columns: var(--about-card-width) 1fr;
+  gap:40px;
+  align-items: start;
+  position: relative;
+}
+.about-card {
+  position: relative;
+  width: var(--about-card-width);
+  height: var(--about-card-height);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 18px 45px rgba(0,0,0,0.14);
+  background: #fefcfb;
+  margin-top: calc(-1 * var(--about-overlap));
+  margin-right: calc(-1 * var(--about-into-text));
+  z-index:6;
+  transition: transform var(--transition);
+}
+.about-card:hover { transform: translateY(-8px); }
+.label-vertical {
+  position:absolute; left:14px; top:50%; transform: translateY(-50%) rotate(-90deg);
+  transform-origin:left top; font-family:"Playfair Display", serif; letter-spacing:6px; color:rgba(255,255,255,0.9);
+  font-size:18px; opacity:0.7; pointer-events:none; text-shadow:0 2px 8px rgba(0,0,0,0.25);
+}
+.about-body { padding:6px 0; }
+.about-body h2 { font-family:"Playfair Display", serif; font-size:34px; margin:6px 0 18px; color:var(--dark);}
+.about-body p { color:#6b635e; font-size:16px; margin:0 0 14px; line-height:1.65; }
+.signature { margin-top:18px; }
+.signature .name { font-family:"Playfair Display", serif; font-size:18px; color: var(--dark);}
+.signature .role { color: var(--muted); font-size:13px; }
 
-    .hero-left{ color:#fff; max-width: 640px; }
-    .eyebrow{font-size:12px;color:rgba(255,255,255,0.9);letter-spacing:2px;margin-bottom:12px}
-    .hero-left h1{
-      margin:0 0 16px 0;
-      font-family:"Playfair Display",serif;
-      font-size:48px;
-      line-height:1.02;
-      color:#fff;
-      text-shadow: 0 6px 18px rgba(0,0,0,0.35);
-    }
-    .hero-left p{margin:0 0 22px 0;font-size:17px;color:rgba(255,255,255,0.95)}
-    .cta{display:inline-block;background:rgba(0,0,0,0.75);color:#fff;padding:12px 20px;border-radius:6px;font-weight:700;letter-spacing:0.6px;text-transform:uppercase}
-    .cta:hover{background:var(--accent);color:var(--dark)}
+/* INFO ROW */
+.info-row {
+  max-width: var(--max-width); margin:36px auto 120px; padding:0 24px;
+  display:grid; grid-template-columns:1fr 1fr; gap:32px;
+}
+.hours {
+  background:#fff; padding:26px; border-radius:10px; box-shadow:0 8px 20px rgba(0,0,0,0.06);
+  transition: transform var(--transition);
+}
+.hours:hover { transform: translateY(-4px);}
+.hours h3 { font-family:"Playfair Display", serif; margin:0 0 12px 0; color: var(--dark);}
+.hours p { margin:6px 0; color:#6b635e; font-weight:600; }
+.studio img { border-radius:12px; box-shadow:0 12px 30px rgba(0,0,0,0.08); }
 
-    /* ABOUT: сетка с фиксированной левой колонкой */
-    .about{
-      max-width:var(--max-width); margin:0 auto;
-      padding:48px 24px 80px;
-      display:grid;
-      grid-template-columns: var(--about-card-width) 1fr; /* левая колонка ширина карточки */
-      gap:40px;
-      align-items:start;
-      position:relative;
-    }
+/* FOOTER */
+footer { padding:28px 24px; text-align:center; color:#8b8682; border-top:1px solid #eee; background:#fff; }
 
-    /* Вертикальная карточка — поднята и уходит в текст */
-    .about-card{
-      position: relative; /* важно: чтобы абсолютный .label-vertical позиционировался внутри карточки */
-      width: var(--about-card-width);
-      height: var(--about-card-height);
-      border-radius:10px;
-      overflow:hidden;
-      box-shadow:0 18px 45px rgba(0,0,0,0.14);
-      background:#f6f6f6;
-      /* Поднять в область hero: отрицательный margin-top */
-      margin-top: calc(-1 * var(--about-overlap));
-      /* Зайти в текстовую колонку: негативный правый отступ */
-      margin-right: calc(-1 * var(--about-into-text));
-      z-index:6;
-    }
-    .about-card img{width:100%;height:100%;object-fit:cover;display:block}
+/* ANIMATION ON SCROLL */
+.scroll-anim {
+  opacity:0;
+  transform: translateY(40px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.scroll-anim.show { opacity:1; transform: translateY(0); }
 
-    /* вертикальная надпись внутри карточки */
-    .label-vertical{
-      position:absolute;
-      left: 14px;
-      top:50%;
-      transform:translateY(-50%) rotate(-90deg);
-      transform-origin:left top;
-      font-family:"Playfair Display",serif;
-      letter-spacing:6px;
-      color: rgba(255,255,255,0.9);
-      font-size:18px;
-      opacity:0.6;
-      pointer-events:none;
-      text-shadow: 0 2px 8px rgba(0,0,0,0.25);
-    }
-
-    .about-body{ padding: 6px 0; }
-    .about-body h2{ font-family:"Playfair Display",serif; font-size:34px; margin:6px 0 18px; color:var(--dark) }
-    .about-body p{ color:#6b635e; font-size:16px; margin:0 0 14px; line-height:1.65 }
-    .signature{ margin-top:18px }
-    .signature .name{ font-family:"Playfair Display",serif; font-size:18px; color:var(--dark) }
-    .signature .role{ color:var(--muted); font-size:13px }
-
-    /* Info row */
-    .info-row{ max-width:var(--max-width); margin:36px auto 120px; padding:0 24px; display:grid; grid-template-columns:1fr 1fr; gap:32px; }
-    .hours{ background:#fff; padding:22px; border-radius:8px; box-shadow:0 8px 20px rgba(0,0,0,0.04) }
-    .hours h3{ font-family:"Playfair Display",serif; margin:0 0 8px 0; color:var(--dark) }
-    .hours p{ margin:6px 0; color:#6b635e; font-weight:600 }
-    .studio img{ border-radius:10px; box-shadow:0 10px 30px rgba(0,0,0,0.06) }
-
-    footer{ padding:28px 24px; text-align:center; color:#8b8682; border-top:1px solid #eee }
-
-    /* Responsive */
-    @media (max-width:1200px){
-      :root{
-        --hero-height: 480px;
-        --about-overlap: 160px;
-        --about-into-text: 80px;
-        --about-card-width: 380px;
-        --about-card-height: 500px;
-      }
-      .hero-left h1{font-size:44px}
-      .about{ grid-template-columns: calc(var(--about-card-width)) 1fr; }
-    }
-    @media (max-width:900px){
-      .hero{ min-height: 360px; }
-      .hero-inner{ grid-template-columns: 1fr; padding:28px; text-align:center }
-      .hero-left{ order:2 }
-      .hero-left h1{ font-size:32px }
-      .about{ grid-template-columns:1fr; padding:28px; gap:24px; }
-      .about-card{ position: static; margin: 0 auto; margin-top: 0; margin-right: 0; width: 80%; height: 420px; }
-      .about-body{ text-align:center }
-      .info-row{ grid-template-columns:1fr; gap:18px }
-    }
-    @media (max-width:480px){
-      .hero-left h1{ font-size:26px }
-      .hero-left p{ font-size:15px }
-    }
-  </style>
+/* RESPONSIVE */
+@media (max-width:900px){
+  .hero { min-height:360px; }
+  .hero-inner { grid-template-columns:1fr; padding:28px; text-align:center; }
+  .hero-left { order:2; }
+  .hero-left h1 { font-size:32px; }
+  .about { grid-template-columns:1fr; padding:28px; gap:24px; }
+  .about-card { position:static; margin:0 auto; width:80%; height:420px; }
+  .about-body { text-align:center; }
+  .info-row { grid-template-columns:1fr; gap:18px; }
+}
+@media (max-width:480px){
+  .hero-left h1 { font-size:26px; }
+  .hero-left p { font-size:15px; }
+}
+</style>
 </head>
 <body>
-  <header>
-    <div class="container topbar">
-      <div class="logo">Nail<span>Hub</span></div>
-      <nav aria-label="Главное меню">
-        <a href="#">Главная</a>
-        <a href="#about">О нас</a>
-        <a href="/courses">Курсы</a>
-        <a href="/auth/login">Войти</a>
-      </nav>
+
+<header>
+  <div class="container topbar">
+    <div class="logo">Nail<span>Hub</span></div>
+    <nav aria-label="Главное меню">
+      <a href="#">Главная</a>
+      <a href="#about">О нас</a>
+      <a href="/courses">Курсы</a>
+      <a href="/auth/login">Войти</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<section class="hero scroll-anim" aria-label="Главный баннер">
+  <div class="hero-inner">
+    <div class="hero-left">
+      <div class="eyebrow">TRENDY SALON & SPA</div>
+      <h1>Больше чем просто<br>Красивый маникюр</h1>
+      <p>
+        Профессиональный маникюр, френч и авторские техники — обучение онлайн и в студии. Подчеркни свою красоту вместе с Nailis Hub.
+      </p>
+      <a class="cta" href="/auth/register">Начать обучение</a>
     </div>
-  </header>
+    <div></div>
+  </div>
+</section>
 
-  <main>
-    <!-- HERO (фон через background-image, начинается у самого верха секции) -->
-    <section class="hero" aria-label="Главный баннер">
-      <div class="hero-inner">
-        <div class="hero-left">
-          <div class="eyebrow">TRENDY SALON & SPA</div>
-          <h1>Больше чем просто<br/>Красивый маникюр</h1>
-          <p>Профессиональный маникюр, френч и авторские техники — обучение онлайн и в студии. Подчеркни свою красоту вместе с Nailis Hub.</p>
-          <a class="cta" href="#">DISCOVER NOW</a>
-        </div>
-        <div><!-- правая колонка визуально заполнена background-image --></div>
+<section id="about" class="about scroll-anim" aria-labelledby="about-title">
+  <div class="about-card" aria-hidden="true">
+    <img src="static/images/hero11.jpg" alt="Олеся - мастер">
+    <div class="label-vertical">HAIR LOUNGE</div>
+  </div>
+  <div class="about-body">
+    <h2 id="about-title">About Us</h2>
+    <p>
+      Привет! Я Олеся — практикующий мастер ногтевого сервиса. За 5 лет в индустрии я выстроила авторскую методику френча и комплексных техник, которые помогают моим ученикам быстро выйти на стабильный доход и уверенность в своих силах.
+    </p>
+    <p>
+      На платформе Nailis Hub вы найдёте понятные пошаговые курсы, записи живых занятий и персональные разборы ошибок — всё, чтобы стать мастером, которого выбирают.
+    </p>
+    <div class="signature">
+      <div class="name">Mayline</div>
+      <div class="role">James Hansen — Director</div>
+    </div>
+  </div>
+</section>
+
+<section class="info-row scroll-anim" aria-label="Информация">
+  <div class="hours">
+    <h3>Opening Hours</h3>
+    <p>MONDAY — FRIDAY: 9AM - 22PM</p>
+    <p>SATURDAY: 10AM - 19PM</p>
+    <p>SUNDAY: 10AM - 19PM</p>
+  </div>
+  <div class="studio">
+    <h3>Наша студия</h3>
+    <img src="static/images/2147878838.jpg" alt="Фото студии">
+  </div>
+</section>
+
+<!-- COURSES SECTION -->
+<section id="courses" class="scroll-anim" style="padding:80px 24px; max-width: var(--max-width); margin:0 auto;">
+  <h2 style="font-family:'Playfair Display', serif; font-size:34px; color:var(--dark); margin-bottom:36px; text-align:center;">Наши курсы</h2>
+  <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:28px;">
+    <div style="background:#fff; border-radius:10px; overflow:hidden; box-shadow:0 8px 25px rgba(0,0,0,0.08); transition:transform var(--transition);">
+      <img src="static/images/2147878838.jpg" alt="Курс 1">
+      <div style="padding:16px;">
+        <h3 style="margin:0 0 8px 0; font-family:'Playfair Display', serif; font-size:20px;">Авторский френч</h3>
+        <p style="font-size:14px; color:#6b635e; margin:0 0 12px;">Освой авторские техники французского маникюра за 4 недели.</p>
+        <a href="#" style="display:inline-block; padding:8px 16px; background:var(--accent); color:#fff; border-radius:6px; text-decoration:none; font-weight:600;">Подробнее</a>
       </div>
-    </section>
-
-    <!-- ABOUT: карточка начинается в hero (с отрицательным margin-top) и заходит во вторую колонку -->
-    <section id="about" class="about" aria-labelledby="about-title">
-      <div class="about-card" aria-hidden="true">
-        <img src="static/images/hero11.jpg" alt="Олеся - мастер" />
-        <div class="label-vertical">HAIR LOUNGE</div>
+    </div>
+    <div style="background:#fff; border-radius:10px; overflow:hidden; box-shadow:0 8px 25px rgba(0,0,0,0.08); transition:transform var(--transition);">
+      <img src="static/images/2147878838.jpg" alt="Курс 2">
+      <div style="padding:16px;">
+        <h3 style="margin:0 0 8px 0; font-family:'Playfair Display', serif; font-size:20px;">Комбинированный маникюр</h3>
+        <p style="font-size:14px; color:#6b635e; margin:0 0 12px;">Изучи современные техники комбинированного маникюра и ухода за ногтями.</p>
+        <a href="#" style="display:inline-block; padding:8px 16px; background:var(--accent); color:#fff; border-radius:6px; text-decoration:none; font-weight:600;">Подробнее</a>
       </div>
-
-      <div class="about-body">
-        <h2 id="about-title">About Us</h2>
-        <p>Привет! Я Олеся — практикующий мастер ногтевого сервиса. За 5 лет в индустрии я выстроила авторскую методику френча и комплексных техник, которые помогают моим ученикам быстро выйти на стабильный доход и уверенность в своих силах.</p>
-
-        <p>На платформе Nailis Hub вы найдёте понятные пошаговые курсы, записи живых занятий и персональные разборы ошибок — всё, чтобы стать мастером, которого выбирают.</p>
-
-        <div class="signature">
-          <div class="name">Mayline</div>
-          <div class="role">James Hansen — Director</div>
-        </div>
+    </div>
+    <div style="background:#fff; border-radius:10px; overflow:hidden; box-shadow:0 8px 25px rgba(0,0,0,0.08); transition:transform var(--transition);">
+      <img src="static/images/2147878838.jpg" alt="Курс 3">
+      <div style="padding:16px;">
+        <h3 style="margin:0 0 8px 0; font-family:'Playfair Display', serif; font-size:20px;">Нейл-арт мастерство</h3>
+        <p style="font-size:14px; color:#6b635e; margin:0 0 12px;">Творческие техники нейл-арта для начинающих и продвинутых мастеров.</p>
+        <a href="#" style="display:inline-block; padding:8px 16px; background:var(--accent); color:#fff; border-radius:6px; text-decoration:none; font-weight:600;">Подробнее</a>
       </div>
-    </section>
+    </div>
+  </div>
+</section>
 
-    <section class="info-row" aria-label="Информация">
-      <div class="hours">
-        <h3>Opening Hours</h3>
-        <p>MONDAY — FRIDAY: 9AM - 22PM</p>
-        <p>SATURDAY: 10AM - 19PM</p>
-        <p>SUNDAY: 10AM - 19PM</p>
-      </div>
-      <div class="studio">
-        <h3>Наша студия</h3>
-        <img src="static/images/2147878838.jpg" alt="Фото студии" />
-      </div>
-    </section>
-  </main>
+<!-- TESTIMONIALS -->
+<section id="testimonials" class="scroll-anim" style="padding:80px 24px; background:#fdf8f4;">
+  <h2 style="font-family:'Playfair Display', serif; font-size:34px; color:var(--dark); text-align:center; margin-bottom:36px;">Отзывы учеников</h2>
+  <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:28px;">
+    <div style="background:#fff; padding:20px; border-radius:10px; box-shadow:0 8px 25px rgba(0,0,0,0.08);">
+      <p style="font-size:14px; color:#6b635e;">“После курса авторского френча я сразу начала зарабатывать первые заказы и получила уверенность в себе!”</p>
+      <strong style="display:block; margin-top:12px; font-family:'Playfair Display', serif;">Алина П.</strong>
+    </div>
+    <div style="background:#fff; padding:20px; border-radius:10px; box-shadow:0 8px 25px rgba(0,0,0,0.08);">
+      <p style="font-size:14px; color:#6b635e;">“Преподаватель объясняет доступно, все техники легко повторить дома. Очень довольна курсом!”</p>
+      <strong style="display:block; margin-top:12px; font-family:'Playfair Display', serif;">Мария С.</strong>
+    </div>
+  </div>
+</section>
 
-  <footer>&copy; 2025 Nailis Hub. Все права защищены.</footer>
+
+<!-- CTA -->
+<section id="cta" class="scroll-anim" style="padding:80px 24px; background:var(--accent); color:#fff; text-align:center; border-radius:12px; margin:80px 24px;">
+  <h2 style="font-family:'Playfair Display', serif; font-size:34px; margin-bottom:16px;">Начни обучение прямо сейчас!</h2>
+  <p style="font-size:16px; margin-bottom:24px;">Присоединяйся к нашим онлайн-курсам и развивай свои навыки с профессионалами Nailis Hub.</p>
+  <a href="/auth/register" style="display:inline-block; padding:14px 28px; background:#fff; color:var(--accent); font-weight:700; border-radius:8px; text-decoration:none; transition:transform var(--transition);">Записаться</a>
+</section>
+
+
+</main>
+
+<footer>&copy; 2025 Nailis Hub. Все права защищены.</footer>
+
+<script>
+// Intersection Observer для анимации при скролле
+const animItems = document.querySelectorAll('.scroll-anim');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting) entry.target.classList.add('show');
+  });
+}, { threshold: 0.2 });
+
+animItems.forEach(el => observer.observe(el));
+</script>
+
 </body>
 </html>

@@ -1,26 +1,28 @@
 """
-Модуль для работы с cookie в FastAPI:
-- Установка и удаление cookie аутентификации
-- Создание flash-сообщений об ошибках через cookie
+Модуль для работы с cookie в FastAPI.
+
+Функции:
+- set_auth_cookie: Устанавливает JWT токен в cookie для аутентификации
+- clear_auth_cookie: Удаляет cookie аутентификации
+- create_flash_error_redirect: Создает редирект с flash-сообщением об ошибке
+- set_refresh_cookie: Устанавливает refresh токен в cookie на длительный срок
+- clear_refresh_cookie: Удаляет cookie refresh токена
+
+Используется в маршрутах аутентификации для управления сессиями и отображением ошибок.
 """
 
 import logging
-from typing import Literal
 from urllib.parse import quote
 
 from fastapi.responses import RedirectResponse
-
 from core.config import settings
 
 logger = logging.getLogger(__name__)
 
 
-def set_auth_cookie(
-        response: RedirectResponse,
-        token: str
-) -> RedirectResponse:
+def set_auth_cookie(response: RedirectResponse, token: str) -> RedirectResponse:
     """
-    Устанавливает cookie с JWT токеном для аутентификации пользователя.
+    Устанавливает JWT токен в cookie для аутентификации пользователя.
 
     Args:
         response (RedirectResponse): HTTP ответ с редиректом.
@@ -40,7 +42,7 @@ def set_auth_cookie(
             samesite=settings.SAMESITE,
         )
         logger.debug("Установлен cookie access_token для аутентификации.")
-    except (TypeError, ValueError) as e:
+    except Exception as e:
         logger.error("Ошибка при установке cookie access_token: %s", e)
     return response
 
@@ -58,18 +60,18 @@ def clear_auth_cookie(response: RedirectResponse) -> RedirectResponse:
     try:
         response.delete_cookie(key="access_token", path="/")
         logger.debug("Удален cookie access_token.")
-    except (TypeError, ValueError) as e:
+    except Exception as e:
         logger.error("Ошибка при удалении cookie access_token: %s", e)
     return response
 
 
 def create_flash_error_redirect(url: str, message: str) -> RedirectResponse:
     """
-    Создает RedirectResponse с установкой flash-сообщения об ошибке в cookie.
+    Создает RedirectResponse с flash-сообщением об ошибке в cookie.
 
     Args:
         url (str): URL для редиректа.
-        message (str): Текст flash-сообщения об ошибке.
+        message (str): Текст flash-сообщения.
 
     Returns:
         RedirectResponse: Ответ с редиректом и установленной flash cookie.
@@ -85,7 +87,53 @@ def create_flash_error_redirect(url: str, message: str) -> RedirectResponse:
             samesite=settings.SAMESITE,
         )
         logger.debug("Установлено flash-сообщение в cookie: %s", message)
-    except (TypeError, ValueError) as e:
+    except Exception as e:
         logger.error("Ошибка при установке flash-сообщения в cookie: %s", e)
         response = RedirectResponse(url=url, status_code=303)
+    return response
+
+
+def set_refresh_cookie(response: RedirectResponse, token: str) -> RedirectResponse:
+    """
+    Устанавливает refresh токен в cookie на длительный срок (по умолчанию 30 дней).
+
+    Args:
+        response (RedirectResponse): HTTP ответ с редиректом.
+        token (str): JWT refresh токен.
+
+    Returns:
+        RedirectResponse: Обновленный ответ с установленной refresh cookie.
+    """
+    try:
+        response.set_cookie(
+            key="refresh_token",
+            value=token,
+            httponly=True,
+            max_age=settings.REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60,
+            expires=settings.REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60,
+            secure=settings.COOKIE_SECURE,
+            samesite=settings.SAMESITE,
+        )
+        logger.debug("Установлен refresh_token в cookie на %s дней.",
+                     settings.REFRESH_TOKEN_EXPIRE_DAYS)
+    except Exception as e:
+        logger.error("Ошибка при установке cookie refresh_token: %s", e)
+    return response
+
+
+def clear_refresh_cookie(response: RedirectResponse) -> RedirectResponse:
+    """
+    Удаляет refresh_token из cookie.
+
+    Args:
+        response (RedirectResponse): HTTP ответ с редиректом.
+
+    Returns:
+        RedirectResponse: Обновленный ответ с удаленной refresh cookie.
+    """
+    try:
+        response.delete_cookie(key="refresh_token", path="/")
+        logger.debug("Удален cookie refresh_token.")
+    except Exception as e:
+        logger.error("Ошибка при удалении cookie refresh_token: %s", e)
     return response

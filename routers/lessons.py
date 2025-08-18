@@ -35,7 +35,7 @@ from services.lesson_service import (
 
 logger = logging.getLogger(__name__)
 
-router = APIRouter(prefix="/lessons", tags=["lessons"])
+router = APIRouter(prefix="/lessons", tags=["Уроки"])
 templates = Jinja2Templates(directory="templates")
 
 

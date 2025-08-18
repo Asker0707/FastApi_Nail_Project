@@ -26,10 +26,9 @@ from auth.dependencies import require_admin
 from db import models
 from db.database import get_db
 
-router = APIRouter(prefix="/admin/courses", tags=["admin courses"])
+router = APIRouter(prefix="/admin/courses", tags=["Админские маршруты для курсов"])
 
 templates = Jinja2Templates(directory="templates")
-
 
 @router.get("/", response_class=HTMLResponse)
 async def admin_courses_page(

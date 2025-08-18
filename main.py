@@ -17,12 +17,14 @@
   * auth.routes - маршруты аутентификации
 """
 
+
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from auth import routes
+from auth.dependencies import get_current_user
 from auth.utils import AuthRedirectException
 from logging_config import setup_logging
 from routers import frontend, lessons, notes, user_profile
@@ -48,11 +50,18 @@ async def auth_redirect_exception_handler(request: Request, exc: AuthRedirectExc
 @app.get("/", response_class=HTMLResponse)
 async def read_root(
     request: Request,
+    current_user=get_current_user
 ):
     """
     Главная страница приложения.
     """
-    return templates.TemplateResponse(request, "index.html")
+    return templates.TemplateResponse(
+        "index.html",
+        {
+            "request": request,
+            "user": current_user
+        }
+    )
 
 
 # Подключение роутеров

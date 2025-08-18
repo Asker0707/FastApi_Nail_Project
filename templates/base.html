@@ -32,8 +32,8 @@
         <ul class="navbar-nav ms-auto">
           <li class="nav-item"><a class="nav-link" href="/">Главная</a></li>
           {% if user %}
-          <li class="nav-item"><a class="nav-link" href="/dashboard">Кабинет</a></li>
-          <li class="nav-item"><a class="nav-link" href="/profile">Профиль</a></li>
+          <li class="nav-item"><a class="nav-link" href="/user/dashboard">Кабинет</a></li>
+          <li class="nav-item"><a class="nav-link" href="/user/profile">Профиль</a></li>
           <li class="nav-item"><a class="nav-link" href="/courses">Курсы</a></li>
           {% if user.is_admin %}
           <li class="nav-item"><a class="nav-link" href="/admin/courses">Админка</a></li>
