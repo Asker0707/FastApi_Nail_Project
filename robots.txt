@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://asker0707.github.io/FastApi_Nail_Project/sitemap.xml
